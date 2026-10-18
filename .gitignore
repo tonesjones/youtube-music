@@ -1,0 +1,13 @@
+# Credentials: never commit
+browser.json
+oauth.json
+
+# Personal data produced by the tool
+backups/
+report*.csv
+undo-*.json
+
+__pycache__/
+*.egg-info/
+.venv/
+.pytest_cache/
