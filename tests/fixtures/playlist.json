@@ -1,0 +1,74 @@
+{
+ "id": "PLtest",
+ "title": "Test",
+ "tracks": [
+  {
+   "videoId": "atv_a",
+   "setVideoId": "SV",
+   "title": "Kept Song",
+   "artists": [
+    {
+     "name": "Pop Star",
+     "id": "UCps"
+    }
+   ],
+   "album": null,
+   "duration": "3:20",
+   "duration_seconds": 200,
+   "isExplicit": false,
+   "isAvailable": true,
+   "videoType": "MUSIC_VIDEO_TYPE_ATV"
+  },
+  {
+   "videoId": "omv_b",
+   "setVideoId": "SV",
+   "title": "Blinding Lights (Official Video)",
+   "artists": [
+    {
+     "name": "The Weeknd",
+     "id": "UCwk"
+    }
+   ],
+   "album": null,
+   "duration": "3:20",
+   "duration_seconds": 200,
+   "isExplicit": false,
+   "isAvailable": true,
+   "videoType": "MUSIC_VIDEO_TYPE_OMV"
+  },
+  {
+   "videoId": "omv_c",
+   "setVideoId": "SV",
+   "title": "Obscure Thing",
+   "artists": [
+    {
+     "name": "Nobody",
+     "id": "UCn"
+    }
+   ],
+   "album": null,
+   "duration": "3:20",
+   "duration_seconds": 200,
+   "isExplicit": false,
+   "isAvailable": true,
+   "videoType": "MUSIC_VIDEO_TYPE_OMV"
+  },
+  {
+   "videoId": "ugc_d",
+   "setVideoId": "SV",
+   "title": "Adele - Hello (Lyrics)",
+   "artists": [
+    {
+     "name": "LyricsVault",
+     "id": "UClv"
+    }
+   ],
+   "album": null,
+   "duration": "4:55",
+   "duration_seconds": 295,
+   "isExplicit": false,
+   "isAvailable": true,
+   "videoType": "MUSIC_VIDEO_TYPE_UGC"
+  }
+ ]
+}

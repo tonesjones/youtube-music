@@ -1,0 +1,1010 @@
+{
+ "exact_topic": {
+  "track": {
+   "videoId": "omv1",
+   "setVideoId": "SV",
+   "title": "Blinding Lights (Official Video)",
+   "artists": [
+    {
+     "name": "The Weeknd",
+     "id": "UCwk"
+    }
+   ],
+   "album": null,
+   "duration": "3:20",
+   "duration_seconds": 200,
+   "isExplicit": false,
+   "isAvailable": true,
+   "videoType": "MUSIC_VIDEO_TYPE_OMV"
+  },
+  "candidates": [
+   {
+    "category": "Songs",
+    "resultType": "song",
+    "videoId": "atv_other",
+    "title": "In Your Eyes",
+    "artists": [
+     {
+      "name": "The Weeknd",
+      "id": "UCwk"
+     }
+    ],
+    "album": {
+     "name": "Album",
+     "id": "MPRE_atv_other"
+    },
+    "duration": "3:58",
+    "duration_seconds": 238,
+    "isExplicit": false,
+    "isAvailable": true,
+    "videoType": "MUSIC_VIDEO_TYPE_ATV"
+   },
+   {
+    "category": "Songs",
+    "resultType": "song",
+    "videoId": "atv1",
+    "title": "Blinding Lights",
+    "artists": [
+     {
+      "name": "The Weeknd",
+      "id": "UCwk"
+     }
+    ],
+    "album": {
+     "name": "Album",
+     "id": "MPRE_atv1"
+    },
+    "duration": "3:20",
+    "isExplicit": false,
+    "isAvailable": true,
+    "videoType": "MUSIC_VIDEO_TYPE_ATV"
+   }
+  ]
+ },
+ "live_vs_studio": {
+  "track": {
+   "videoId": "omv2",
+   "setVideoId": "SV",
+   "title": "Hotel California (Live at Wembley)",
+   "artists": [
+    {
+     "name": "Eagles",
+     "id": "UCeg"
+    }
+   ],
+   "album": null,
+   "duration": "6:30",
+   "duration_seconds": 390,
+   "isExplicit": false,
+   "isAvailable": true,
+   "videoType": "MUSIC_VIDEO_TYPE_OMV"
+  },
+  "candidates": [
+   {
+    "category": "Songs",
+    "resultType": "song",
+    "videoId": "atv2",
+    "title": "Hotel California",
+    "artists": [
+     {
+      "name": "Eagles",
+      "id": "UCeg"
+     }
+    ],
+    "album": {
+     "name": "Album",
+     "id": "MPRE_atv2"
+    },
+    "duration": "6:30",
+    "duration_seconds": 390,
+    "isExplicit": false,
+    "isAvailable": true,
+    "videoType": "MUSIC_VIDEO_TYPE_ATV"
+   }
+  ]
+ },
+ "live_vs_live": {
+  "track": {
+   "videoId": "omv2",
+   "setVideoId": "SV",
+   "title": "Hotel California (Live at Wembley)",
+   "artists": [
+    {
+     "name": "Eagles",
+     "id": "UCeg"
+    }
+   ],
+   "album": null,
+   "duration": "6:30",
+   "duration_seconds": 390,
+   "isExplicit": false,
+   "isAvailable": true,
+   "videoType": "MUSIC_VIDEO_TYPE_OMV"
+  },
+  "candidates": [
+   {
+    "category": "Songs",
+    "resultType": "song",
+    "videoId": "atv2l",
+    "title": "Hotel California (Live at Wembley)",
+    "artists": [
+     {
+      "name": "Eagles",
+      "id": "UCeg"
+     }
+    ],
+    "album": {
+     "name": "Album",
+     "id": "MPRE_atv2l"
+    },
+    "duration": "6:30",
+    "duration_seconds": 390,
+    "isExplicit": false,
+    "isAvailable": true,
+    "videoType": "MUSIC_VIDEO_TYPE_ATV"
+   }
+  ]
+ },
+ "remix_only": {
+  "track": {
+   "videoId": "omv3",
+   "setVideoId": "SV",
+   "title": "Blinding Lights",
+   "artists": [
+    {
+     "name": "The Weeknd",
+     "id": "UCwk"
+    }
+   ],
+   "album": null,
+   "duration": "3:20",
+   "duration_seconds": 200,
+   "isExplicit": false,
+   "isAvailable": true,
+   "videoType": "MUSIC_VIDEO_TYPE_OMV"
+  },
+  "candidates": [
+   {
+    "category": "Songs",
+    "resultType": "song",
+    "videoId": "atv3",
+    "title": "Blinding Lights (Remix)",
+    "artists": [
+     {
+      "name": "The Weeknd",
+      "id": "UCwk"
+     }
+    ],
+    "album": {
+     "name": "Album",
+     "id": "MPRE_atv3"
+    },
+    "duration": "3:20",
+    "duration_seconds": 200,
+    "isExplicit": false,
+    "isAvailable": true,
+    "videoType": "MUSIC_VIDEO_TYPE_ATV"
+   }
+  ]
+ },
+ "unrelated": {
+  "track": {
+   "videoId": "omv4",
+   "setVideoId": "SV",
+   "title": "Blinding Lights",
+   "artists": [
+    {
+     "name": "The Weeknd",
+     "id": "UCwk"
+    }
+   ],
+   "album": null,
+   "duration": "3:20",
+   "duration_seconds": 200,
+   "isExplicit": false,
+   "isAvailable": true,
+   "videoType": "MUSIC_VIDEO_TYPE_OMV"
+  },
+  "candidates": [
+   {
+    "category": "Songs",
+    "resultType": "song",
+    "videoId": "u1",
+    "title": "Bohemian Rhapsody",
+    "artists": [
+     {
+      "name": "Queen",
+      "id": "UCq"
+     }
+    ],
+    "album": {
+     "name": "Album",
+     "id": "MPRE_u1"
+    },
+    "duration": "5:54",
+    "duration_seconds": 354,
+    "isExplicit": false,
+    "isAvailable": true,
+    "videoType": "MUSIC_VIDEO_TYPE_ATV"
+   },
+   {
+    "category": "Songs",
+    "resultType": "song",
+    "videoId": "u2",
+    "title": "Dance Monkey",
+    "artists": [
+     {
+      "name": "Tones and I",
+      "id": "UCt"
+     }
+    ],
+    "album": {
+     "name": "Album",
+     "id": "MPRE_u2"
+    },
+    "duration": "3:29",
+    "duration_seconds": 209,
+    "isExplicit": false,
+    "isAvailable": true,
+    "videoType": "MUSIC_VIDEO_TYPE_ATV"
+   }
+  ]
+ },
+ "empty": {
+  "track": {
+   "videoId": "omv4",
+   "setVideoId": "SV",
+   "title": "Blinding Lights",
+   "artists": [
+    {
+     "name": "The Weeknd",
+     "id": "UCwk"
+    }
+   ],
+   "album": null,
+   "duration": "3:20",
+   "duration_seconds": 200,
+   "isExplicit": false,
+   "isAvailable": true,
+   "videoType": "MUSIC_VIDEO_TYPE_OMV"
+  },
+  "candidates": []
+ },
+ "only_omv_or_unavailable": {
+  "track": {
+   "videoId": "omv4",
+   "setVideoId": "SV",
+   "title": "Blinding Lights",
+   "artists": [
+    {
+     "name": "The Weeknd",
+     "id": "UCwk"
+    }
+   ],
+   "album": null,
+   "duration": "3:20",
+   "duration_seconds": 200,
+   "isExplicit": false,
+   "isAvailable": true,
+   "videoType": "MUSIC_VIDEO_TYPE_OMV"
+  },
+  "candidates": [
+   {
+    "category": "Songs",
+    "resultType": "song",
+    "videoId": "x1",
+    "title": "Blinding Lights",
+    "artists": [
+     {
+      "name": "The Weeknd",
+      "id": "UCwk"
+     }
+    ],
+    "album": {
+     "name": "Album",
+     "id": "MPRE_x1"
+    },
+    "duration": "3:20",
+    "duration_seconds": 200,
+    "isExplicit": false,
+    "isAvailable": true,
+    "videoType": "MUSIC_VIDEO_TYPE_OMV"
+   },
+   {
+    "category": "Songs",
+    "resultType": "song",
+    "videoId": "x2",
+    "title": "Blinding Lights",
+    "artists": [
+     {
+      "name": "The Weeknd",
+      "id": "UCwk"
+     }
+    ],
+    "album": {
+     "name": "Album",
+     "id": "MPRE_x2"
+    },
+    "duration": "3:20",
+    "duration_seconds": 200,
+    "isExplicit": false,
+    "isAvailable": false,
+    "videoType": "MUSIC_VIDEO_TYPE_ATV"
+   }
+  ]
+ },
+ "featured": {
+  "track": {
+   "videoId": "omv5",
+   "setVideoId": "SV",
+   "title": "Stay ft. Justin Bieber (Official Video)",
+   "artists": [
+    {
+     "name": "The Kid LAROI",
+     "id": "UClaroi"
+    }
+   ],
+   "album": null,
+   "duration": "2:21",
+   "duration_seconds": 141,
+   "isExplicit": false,
+   "isAvailable": true,
+   "videoType": "MUSIC_VIDEO_TYPE_OMV"
+  },
+  "candidates": [
+   {
+    "category": "Songs",
+    "resultType": "song",
+    "videoId": "atv5",
+    "title": "STAY",
+    "artists": [
+     {
+      "name": "The Kid LAROI",
+      "id": "UClaroi"
+     },
+     {
+      "name": "Justin Bieber",
+      "id": "UCjb"
+     }
+    ],
+    "album": {
+     "name": "Album",
+     "id": "MPRE_atv5"
+    },
+    "duration": "2:21",
+    "duration_seconds": 141,
+    "isExplicit": false,
+    "isAvailable": true,
+    "videoType": "MUSIC_VIDEO_TYPE_ATV"
+   }
+  ]
+ },
+ "explicit_only_clean": {
+  "track": {
+   "videoId": "omv6",
+   "setVideoId": "SV",
+   "title": "Song (Official Video)",
+   "artists": [
+    {
+     "name": "Pop Star",
+     "id": "UCps"
+    }
+   ],
+   "album": null,
+   "duration": "3:00",
+   "duration_seconds": 180,
+   "isExplicit": true,
+   "isAvailable": true,
+   "videoType": "MUSIC_VIDEO_TYPE_OMV"
+  },
+  "candidates": [
+   {
+    "category": "Songs",
+    "resultType": "song",
+    "videoId": "c6",
+    "title": "Song",
+    "artists": [
+     {
+      "name": "Pop Star",
+      "id": "UCps"
+     }
+    ],
+    "album": {
+     "name": "Album",
+     "id": "MPRE_c6"
+    },
+    "duration": "3:00",
+    "duration_seconds": 180,
+    "isExplicit": false,
+    "isAvailable": true,
+    "videoType": "MUSIC_VIDEO_TYPE_ATV"
+   }
+  ]
+ },
+ "explicit_and_clean": {
+  "track": {
+   "videoId": "omv6",
+   "setVideoId": "SV",
+   "title": "Song (Official Video)",
+   "artists": [
+    {
+     "name": "Pop Star",
+     "id": "UCps"
+    }
+   ],
+   "album": null,
+   "duration": "3:00",
+   "duration_seconds": 180,
+   "isExplicit": true,
+   "isAvailable": true,
+   "videoType": "MUSIC_VIDEO_TYPE_OMV"
+  },
+  "candidates": [
+   {
+    "category": "Songs",
+    "resultType": "song",
+    "videoId": "c6",
+    "title": "Song",
+    "artists": [
+     {
+      "name": "Pop Star",
+      "id": "UCps"
+     }
+    ],
+    "album": {
+     "name": "Album",
+     "id": "MPRE_c6"
+    },
+    "duration": "3:00",
+    "duration_seconds": 180,
+    "isExplicit": false,
+    "isAvailable": true,
+    "videoType": "MUSIC_VIDEO_TYPE_ATV"
+   },
+   {
+    "category": "Songs",
+    "resultType": "song",
+    "videoId": "e6",
+    "title": "Song",
+    "artists": [
+     {
+      "name": "Pop Star",
+      "id": "UCps"
+     }
+    ],
+    "album": {
+     "name": "Album",
+     "id": "MPRE_e6"
+    },
+    "duration": "3:00",
+    "duration_seconds": 180,
+    "isExplicit": true,
+    "isAvailable": true,
+    "videoType": "MUSIC_VIDEO_TYPE_ATV"
+   }
+  ]
+ },
+ "explicit_only_explicit": {
+  "track": {
+   "videoId": "omv6",
+   "setVideoId": "SV",
+   "title": "Song (Official Video)",
+   "artists": [
+    {
+     "name": "Pop Star",
+     "id": "UCps"
+    }
+   ],
+   "album": null,
+   "duration": "3:00",
+   "duration_seconds": 180,
+   "isExplicit": true,
+   "isAvailable": true,
+   "videoType": "MUSIC_VIDEO_TYPE_OMV"
+  },
+  "candidates": [
+   {
+    "category": "Songs",
+    "resultType": "song",
+    "videoId": "e6",
+    "title": "Song",
+    "artists": [
+     {
+      "name": "Pop Star",
+      "id": "UCps"
+     }
+    ],
+    "album": {
+     "name": "Album",
+     "id": "MPRE_e6"
+    },
+    "duration": "3:00",
+    "duration_seconds": 180,
+    "isExplicit": true,
+    "isAvailable": true,
+    "videoType": "MUSIC_VIDEO_TYPE_ATV"
+   }
+  ]
+ },
+ "clean_orig_explicit_cand": {
+  "track": {
+   "videoId": "omv7",
+   "setVideoId": "SV",
+   "title": "Song (Official Video)",
+   "artists": [
+    {
+     "name": "Pop Star",
+     "id": "UCps"
+    }
+   ],
+   "album": null,
+   "duration": "3:00",
+   "duration_seconds": 180,
+   "isExplicit": false,
+   "isAvailable": true,
+   "videoType": "MUSIC_VIDEO_TYPE_OMV"
+  },
+  "candidates": [
+   {
+    "category": "Songs",
+    "resultType": "song",
+    "videoId": "e7",
+    "title": "Song",
+    "artists": [
+     {
+      "name": "Pop Star",
+      "id": "UCps"
+     }
+    ],
+    "album": {
+     "name": "Album",
+     "id": "MPRE_e7"
+    },
+    "duration": "3:00",
+    "duration_seconds": 180,
+    "isExplicit": true,
+    "isAvailable": true,
+    "videoType": "MUSIC_VIDEO_TYPE_ATV"
+   }
+  ]
+ },
+ "long_intro": {
+  "track": {
+   "videoId": "omv8",
+   "setVideoId": "SV",
+   "title": "Slow Burn (Official Video)",
+   "artists": [
+    {
+     "name": "Pop Star",
+     "id": "UCps"
+    }
+   ],
+   "album": null,
+   "duration": "5:00",
+   "duration_seconds": 300,
+   "isExplicit": false,
+   "isAvailable": true,
+   "videoType": "MUSIC_VIDEO_TYPE_OMV"
+  },
+  "candidates": [
+   {
+    "category": "Songs",
+    "resultType": "song",
+    "videoId": "d_long_intro",
+    "title": "Slow Burn",
+    "artists": [
+     {
+      "name": "Pop Star",
+      "id": "UCps"
+     }
+    ],
+    "album": {
+     "name": "Album",
+     "id": "MPRE_d_long_intro"
+    },
+    "duration": "4:15",
+    "duration_seconds": 255,
+    "isExplicit": false,
+    "isAvailable": true,
+    "videoType": "MUSIC_VIDEO_TYPE_ATV"
+   }
+  ]
+ },
+ "minus10": {
+  "track": {
+   "videoId": "omv8",
+   "setVideoId": "SV",
+   "title": "Slow Burn (Official Video)",
+   "artists": [
+    {
+     "name": "Pop Star",
+     "id": "UCps"
+    }
+   ],
+   "album": null,
+   "duration": "5:00",
+   "duration_seconds": 300,
+   "isExplicit": false,
+   "isAvailable": true,
+   "videoType": "MUSIC_VIDEO_TYPE_OMV"
+  },
+  "candidates": [
+   {
+    "category": "Songs",
+    "resultType": "song",
+    "videoId": "d_minus10",
+    "title": "Slow Burn",
+    "artists": [
+     {
+      "name": "Pop Star",
+      "id": "UCps"
+     }
+    ],
+    "album": {
+     "name": "Album",
+     "id": "MPRE_d_minus10"
+    },
+    "duration": "4:50",
+    "duration_seconds": 290,
+    "isExplicit": false,
+    "isAvailable": true,
+    "videoType": "MUSIC_VIDEO_TYPE_ATV"
+   }
+  ]
+ },
+ "plus6": {
+  "track": {
+   "videoId": "omv8",
+   "setVideoId": "SV",
+   "title": "Slow Burn (Official Video)",
+   "artists": [
+    {
+     "name": "Pop Star",
+     "id": "UCps"
+    }
+   ],
+   "album": null,
+   "duration": "5:00",
+   "duration_seconds": 300,
+   "isExplicit": false,
+   "isAvailable": true,
+   "videoType": "MUSIC_VIDEO_TYPE_OMV"
+  },
+  "candidates": [
+   {
+    "category": "Songs",
+    "resultType": "song",
+    "videoId": "d_plus6",
+    "title": "Slow Burn",
+    "artists": [
+     {
+      "name": "Pop Star",
+      "id": "UCps"
+     }
+    ],
+    "album": {
+     "name": "Album",
+     "id": "MPRE_d_plus6"
+    },
+    "duration": "5:06",
+    "duration_seconds": 306,
+    "isExplicit": false,
+    "isAvailable": true,
+    "videoType": "MUSIC_VIDEO_TYPE_ATV"
+   }
+  ]
+ },
+ "ugc_lyrics": {
+  "track": {
+   "videoId": "ugc1",
+   "setVideoId": "SV",
+   "title": "Adele - Hello (Lyrics)",
+   "artists": [
+    {
+     "name": "LyricsVault",
+     "id": "UClv"
+    }
+   ],
+   "album": null,
+   "duration": "4:55",
+   "duration_seconds": 295,
+   "isExplicit": false,
+   "isAvailable": true,
+   "videoType": "MUSIC_VIDEO_TYPE_UGC"
+  },
+  "candidates": [
+   {
+    "category": "Songs",
+    "resultType": "song",
+    "videoId": "atv9",
+    "title": "Hello",
+    "artists": [
+     {
+      "name": "Adele",
+      "id": "UCadele"
+     }
+    ],
+    "album": {
+     "name": "Album",
+     "id": "MPRE_atv9"
+    },
+    "duration": "4:55",
+    "duration_seconds": 295,
+    "isExplicit": false,
+    "isAvailable": true,
+    "videoType": "MUSIC_VIDEO_TYPE_ATV"
+   }
+  ]
+ },
+ "official_source": {
+  "track": {
+   "videoId": "os1",
+   "setVideoId": "SV",
+   "title": "Perfect Song",
+   "artists": [
+    {
+     "name": "Pop Star",
+     "id": "UCps"
+    }
+   ],
+   "album": null,
+   "duration": "3:20",
+   "duration_seconds": 200,
+   "isExplicit": false,
+   "isAvailable": true,
+   "videoType": "MUSIC_VIDEO_TYPE_OFFICIAL_SOURCE_MUSIC"
+  },
+  "candidates": [
+   {
+    "category": "Songs",
+    "resultType": "song",
+    "videoId": "atv10",
+    "title": "Perfect Song",
+    "artists": [
+     {
+      "name": "Pop Star",
+      "id": "UCps"
+     }
+    ],
+    "album": {
+     "name": "Album",
+     "id": "MPRE_atv10"
+    },
+    "duration": "3:20",
+    "duration_seconds": 200,
+    "isExplicit": false,
+    "isAvailable": true,
+    "videoType": "MUSIC_VIDEO_TYPE_ATV"
+   }
+  ]
+ },
+ "atv_keep": {
+  "track": {
+   "videoId": "atv11",
+   "setVideoId": "SV",
+   "title": "Song",
+   "artists": [
+    {
+     "name": "Pop Star",
+     "id": "UCps"
+    }
+   ],
+   "album": null,
+   "duration": "3:20",
+   "duration_seconds": 200,
+   "isExplicit": false,
+   "isAvailable": true,
+   "videoType": "MUSIC_VIDEO_TYPE_ATV"
+  },
+  "candidates": []
+ },
+ "no_setVideoId": {
+  "track": {
+   "videoId": "omv12",
+   "title": "Perfect Song (Official Video)",
+   "artists": [
+    {
+     "name": "Pop Star",
+     "id": "UCps"
+    }
+   ],
+   "album": null,
+   "duration": "3:20",
+   "duration_seconds": 200,
+   "isExplicit": false,
+   "isAvailable": true,
+   "videoType": "MUSIC_VIDEO_TYPE_OMV"
+  },
+  "candidates": [
+   {
+    "category": "Songs",
+    "resultType": "song",
+    "videoId": "atv12",
+    "title": "Perfect Song",
+    "artists": [
+     {
+      "name": "Pop Star",
+      "id": "UCps"
+     }
+    ],
+    "album": {
+     "name": "Album",
+     "id": "MPRE_atv12"
+    },
+    "duration": "3:20",
+    "duration_seconds": 200,
+    "isExplicit": false,
+    "isAvailable": true,
+    "videoType": "MUSIC_VIDEO_TYPE_ATV"
+   }
+  ]
+ },
+ "short_title_trap": {
+  "track": {
+   "videoId": "omv13",
+   "setVideoId": "SV",
+   "title": "Love",
+   "artists": [
+    {
+     "name": "Pop Star",
+     "id": "UCps"
+    }
+   ],
+   "album": null,
+   "duration": "3:20",
+   "duration_seconds": 200,
+   "isExplicit": false,
+   "isAvailable": true,
+   "videoType": "MUSIC_VIDEO_TYPE_OMV"
+  },
+  "candidates": [
+   {
+    "category": "Songs",
+    "resultType": "song",
+    "videoId": "atv13",
+    "title": "Love Story",
+    "artists": [
+     {
+      "name": "Pop Star",
+      "id": "UCps"
+     }
+    ],
+    "album": {
+     "name": "Album",
+     "id": "MPRE_atv13"
+    },
+    "duration": "3:20",
+    "duration_seconds": 200,
+    "isExplicit": false,
+    "isAvailable": true,
+    "videoType": "MUSIC_VIDEO_TYPE_ATV"
+   }
+  ]
+ },
+ "japanese": {
+  "track": {
+   "videoId": "omv14",
+   "setVideoId": "SV",
+   "title": "米津玄師 - Lemon (Official Video)",
+   "artists": [
+    {
+     "name": "米津玄師",
+     "id": "UCyonezu"
+    }
+   ],
+   "album": null,
+   "duration": "4:15",
+   "duration_seconds": 255,
+   "isExplicit": false,
+   "isAvailable": true,
+   "videoType": "MUSIC_VIDEO_TYPE_OMV"
+  },
+  "candidates": [
+   {
+    "category": "Songs",
+    "resultType": "song",
+    "videoId": "atv14",
+    "title": "Lemon",
+    "artists": [
+     {
+      "name": "米津玄師",
+      "id": "UCyonezu"
+     }
+    ],
+    "album": {
+     "name": "Album",
+     "id": "MPRE_atv14"
+    },
+    "duration": "4:15",
+    "duration_seconds": 255,
+    "isExplicit": false,
+    "isAvailable": true,
+    "videoType": "MUSIC_VIDEO_TYPE_ATV"
+   }
+  ]
+ },
+ "japanese_title": {
+  "track": {
+   "videoId": "omv15",
+   "setVideoId": "SV",
+   "title": "打上花火 (Official Video)",
+   "artists": [
+    {
+     "name": "米津玄師",
+     "id": "UCyonezu"
+    }
+   ],
+   "album": null,
+   "duration": "4:50",
+   "duration_seconds": 290,
+   "isExplicit": false,
+   "isAvailable": true,
+   "videoType": "MUSIC_VIDEO_TYPE_OMV"
+  },
+  "candidates": [
+   {
+    "category": "Songs",
+    "resultType": "song",
+    "videoId": "atv15",
+    "title": "打上花火",
+    "artists": [
+     {
+      "name": "米津玄師",
+      "id": "UCyonezu"
+     }
+    ],
+    "album": {
+     "name": "Album",
+     "id": "MPRE_atv15"
+    },
+    "duration": "4:50",
+    "duration_seconds": 290,
+    "isExplicit": false,
+    "isAvailable": true,
+    "videoType": "MUSIC_VIDEO_TYPE_ATV"
+   }
+  ]
+ },
+ "korean_title": {
+  "track": {
+   "videoId": "omv16",
+   "setVideoId": "SV",
+   "title": "봄날 [4K]",
+   "artists": [
+    {
+     "name": "방탄소년단",
+     "id": "UCbts"
+    }
+   ],
+   "album": null,
+   "duration": "4:34",
+   "duration_seconds": 274,
+   "isExplicit": false,
+   "isAvailable": true,
+   "videoType": "MUSIC_VIDEO_TYPE_OMV"
+  },
+  "candidates": [
+   {
+    "category": "Songs",
+    "resultType": "song",
+    "videoId": "atv16",
+    "title": "봄날",
+    "artists": [
+     {
+      "name": "방탄소년단",
+      "id": "UCbts"
+     }
+    ],
+    "album": {
+     "name": "Album",
+     "id": "MPRE_atv16"
+    },
+    "duration": "4:34",
+    "duration_seconds": 274,
+    "isExplicit": false,
+    "isAvailable": true,
+    "videoType": "MUSIC_VIDEO_TYPE_ATV"
+   }
+  ]
+ }
+}
