@@ -1,7 +1,7 @@
 import pytest
 
 from ytm_hygiene.match import (
-    clean_title, decide, normalize, parse_original, seconds, split_artist_prefix,
+    clean_title, decide, normalize, parse_original, remixer, seconds, split_artist_prefix,
 )
 
 
@@ -87,10 +87,37 @@ def test_duration_minus10_swap(cases):
     assert d.action == "SWAP"
 
 
-def test_duration_plus6_flag(cases):
+def test_duration_plus6_omv_swap(cases):
     d = run(cases, "plus6")
     assert d.best.duration_delta == 6
-    assert "duration" in d.flags
+    assert d.action == "SWAP"
+
+
+def test_duration_plus6_ugc_flag(cases):
+    assert "duration" in run(cases, "ugc_plus6").flags
+
+
+def test_omv_song_longer_swap(cases):
+    d = run(cases, "omv_song_longer")
+    assert d.best.duration_delta == 69
+    assert d.action == "SWAP"
+
+
+def test_wrong_artist_flag(cases):
+    d = run(cases, "wrong_artist_cover")
+    assert d.action == "REVIEW"
+    assert "artist" in d.flags
+
+
+@pytest.mark.parametrize("name", ["remixer_mismatch", "remixer_unnamed"])
+def test_remixer_mismatch_flag(cases, name):
+    d = run(cases, name)
+    assert d.action == "REVIEW"
+    assert "version:remixer" in d.flags
+
+
+def test_remixer_same_swap(cases):
+    assert run(cases, "remixer_same").action == "SWAP"
 
 
 def test_ugc_lyrics_parse_and_swap(cases):
@@ -144,6 +171,9 @@ def test_korean_swap(cases):
         ("Song (feat. Someone)", "Song"),
         ("Song ft. Someone", "Song"),
         ("Song (Remix)", "Song (Remix)"),
+        ("Sweeterman (lyrics on screen)", "Sweeterman"),
+        ("Sweeterman (CDQ/Explicit Version)", "Sweeterman"),
+        ("Coffee Break [HD]", "Coffee Break"),
     ],
 )
 def test_clean_title(raw, expected):
@@ -170,3 +200,10 @@ def test_seconds():
     assert seconds({"duration": "3:45"}) == 225
     assert seconds({"duration_seconds": 10, "duration": "9:99"}) == 10
     assert seconds({}) is None
+
+
+def test_remixer():
+    assert remixer("Shiver (DEVANK REMIX)") == "devank"
+    assert remixer("Waves (:DARREN Remix)") == "darren"
+    assert remixer("Waves ( Remix)") == ""
+    assert remixer("Stoner Remix!!!") == ""

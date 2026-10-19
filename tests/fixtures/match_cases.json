@@ -1006,5 +1006,265 @@
     "videoType": "MUSIC_VIDEO_TYPE_ATV"
    }
   ]
+ },
+ "omv_song_longer": {
+  "track": {
+   "videoId": "omv_shm",
+   "setVideoId": "SV",
+   "title": "Don't You Worry Child (Official Video) (feat. John Martin)",
+   "artists": [
+    {
+     "name": "Swedish House Mafia",
+     "id": "UCshm"
+    }
+   ],
+   "album": null,
+   "duration": "3:34",
+   "duration_seconds": 214,
+   "isExplicit": false,
+   "isAvailable": true,
+   "videoType": "MUSIC_VIDEO_TYPE_OMV"
+  },
+  "candidates": [
+   {
+    "category": "Songs",
+    "resultType": "song",
+    "videoId": "atv_shm",
+    "title": "Don't You Worry Child (feat. John Martin)",
+    "artists": [
+     {
+      "name": "Swedish House Mafia",
+      "id": "UCshm"
+     }
+    ],
+    "album": {
+     "name": "Album",
+     "id": "MPRE_atv_shm"
+    },
+    "duration": "4:43",
+    "duration_seconds": 283,
+    "isExplicit": false,
+    "isAvailable": true,
+    "videoType": "MUSIC_VIDEO_TYPE_ATV"
+   }
+  ]
+ },
+ "ugc_plus6": {
+  "track": {
+   "videoId": "ugc_p6",
+   "setVideoId": "SV",
+   "title": "Pop Star - Slow Burn",
+   "artists": [
+    {
+     "name": "Some Channel",
+     "id": "UCchan"
+    }
+   ],
+   "album": null,
+   "duration": "5:00",
+   "duration_seconds": 300,
+   "isExplicit": false,
+   "isAvailable": true,
+   "videoType": "MUSIC_VIDEO_TYPE_UGC"
+  },
+  "candidates": [
+   {
+    "category": "Songs",
+    "resultType": "song",
+    "videoId": "atv_p6",
+    "title": "Slow Burn",
+    "artists": [
+     {
+      "name": "Pop Star",
+      "id": "UCpop"
+     }
+    ],
+    "album": {
+     "name": "Album",
+     "id": "MPRE_atv_p6"
+    },
+    "duration": "5:06",
+    "duration_seconds": 306,
+    "isExplicit": false,
+    "isAvailable": true,
+    "videoType": "MUSIC_VIDEO_TYPE_ATV"
+   }
+  ]
+ },
+ "wrong_artist_cover": {
+  "track": {
+   "videoId": "omv_fab",
+   "setVideoId": "SV",
+   "title": "Thim Slick (feat. Jeremih)",
+   "artists": [
+    {
+     "name": "Fabolous",
+     "id": "UCfab"
+    }
+   ],
+   "album": null,
+   "duration": "4:00",
+   "duration_seconds": 240,
+   "isExplicit": false,
+   "isAvailable": true,
+   "videoType": "MUSIC_VIDEO_TYPE_OMV"
+  },
+  "candidates": [
+   {
+    "category": "Songs",
+    "resultType": "song",
+    "videoId": "atv_cover",
+    "title": "Thim Slick (feat. GangoLanez)",
+    "artists": [
+     {
+      "name": "Hamo Grime",
+      "id": "UChamo"
+     }
+    ],
+    "album": {
+     "name": "Album",
+     "id": "MPRE_atv_cover"
+    },
+    "duration": "4:02",
+    "duration_seconds": 242,
+    "isExplicit": false,
+    "isAvailable": true,
+    "videoType": "MUSIC_VIDEO_TYPE_ATV"
+   }
+  ]
+ },
+ "remixer_mismatch": {
+  "track": {
+   "videoId": "ugc_shiver",
+   "setVideoId": "SV",
+   "title": "John Summit & Hayla - Shiver (DEVANK REMIX)",
+   "artists": [
+    {
+     "name": "Devank",
+     "id": "UCdev"
+    }
+   ],
+   "album": null,
+   "duration": "3:20",
+   "duration_seconds": 200,
+   "isExplicit": false,
+   "isAvailable": true,
+   "videoType": "MUSIC_VIDEO_TYPE_UGC"
+  },
+  "candidates": [
+   {
+    "category": "Songs",
+    "resultType": "song",
+    "videoId": "atv_shiver",
+    "title": "Shiver (Cassian Remix)",
+    "artists": [
+     {
+      "name": "John Summit",
+      "id": "UCjs"
+     },
+     {
+      "name": "Hayla",
+      "id": "UChay"
+     }
+    ],
+    "album": {
+     "name": "Album",
+     "id": "MPRE_atv_shiver"
+    },
+    "duration": "3:20",
+    "duration_seconds": 200,
+    "isExplicit": false,
+    "isAvailable": true,
+    "videoType": "MUSIC_VIDEO_TYPE_ATV"
+   }
+  ]
+ },
+ "remixer_unnamed": {
+  "track": {
+   "videoId": "omv_waves",
+   "setVideoId": "SV",
+   "title": "Waves ( Remix)",
+   "artists": [
+    {
+     "name": "Mr. Probz",
+     "id": "UCprobz"
+    }
+   ],
+   "album": null,
+   "duration": "3:20",
+   "duration_seconds": 200,
+   "isExplicit": false,
+   "isAvailable": true,
+   "videoType": "MUSIC_VIDEO_TYPE_OMV"
+  },
+  "candidates": [
+   {
+    "category": "Songs",
+    "resultType": "song",
+    "videoId": "atv_waves",
+    "title": "Waves (:DARREN Remix)",
+    "artists": [
+     {
+      "name": "Mr. Probz",
+      "id": "UCprobz"
+     }
+    ],
+    "album": {
+     "name": "Album",
+     "id": "MPRE_atv_waves"
+    },
+    "duration": "3:20",
+    "duration_seconds": 200,
+    "isExplicit": false,
+    "isAvailable": true,
+    "videoType": "MUSIC_VIDEO_TYPE_ATV"
+   }
+  ]
+ },
+ "remixer_same": {
+  "track": {
+   "videoId": "omv_same",
+   "setVideoId": "SV",
+   "title": "Shiver (Cassian Remix) (Official Video)",
+   "artists": [
+    {
+     "name": "John Summit",
+     "id": "UCjs"
+    }
+   ],
+   "album": null,
+   "duration": "3:20",
+   "duration_seconds": 200,
+   "isExplicit": false,
+   "isAvailable": true,
+   "videoType": "MUSIC_VIDEO_TYPE_OMV"
+  },
+  "candidates": [
+   {
+    "category": "Songs",
+    "resultType": "song",
+    "videoId": "atv_same",
+    "title": "Shiver (Cassian Remix)",
+    "artists": [
+     {
+      "name": "John Summit",
+      "id": "UCjs"
+     },
+     {
+      "name": "Hayla",
+      "id": "UChay"
+     }
+    ],
+    "album": {
+     "name": "Album",
+     "id": "MPRE_atv_same"
+    },
+    "duration": "3:20",
+    "duration_seconds": 200,
+    "isExplicit": false,
+    "isAvailable": true,
+    "videoType": "MUSIC_VIDEO_TYPE_ATV"
+   }
+  ]
  }
 }

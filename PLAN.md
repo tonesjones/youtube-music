@@ -7,23 +7,42 @@ media, keep request volume low, `browser.json` auth only (never OAuth).
 
 ## Status
 
-- Done: `backup`, `scan`, `evaluate`, `sync` (vault writes only). 63 tests pass.
-- Next: T1 (accuracy test). Waiting on the scan run and verdicts.
-- Blocked: T7 `apply` / `undo` waits for approval of the accuracy results (T1–T2).
+- Done: `backup`, `scan`, `evaluate`, `sync` (vault writes only). T1 and T2
+  (accuracy test and tuning) approved 2026-10-18. 73 tests pass.
+- Next: T3–T4 (sync rework). T7 is unblocked but still needs the in-place vs copy
+  decision below.
+- README is behind T2: it still says songs may run at most 5 s longer and lists no
+  `artist` or `version:remixer` flags. Fold that into T6.
 
-## Checkpoint (2026-10-18)
+## T1–T2 results (2026-10-18)
 
-Where T1 stopped:
+Scanned two real YouTube playlists (they are the same playlists in YouTube Music):
+`2025` (57 tracks, 12 videos) and `Music` (52 tracks, 16 videos). Most videos are fan
+remixes and mashups with no song version, so few swaps are possible.
 
-- Done: `.venv` created (Python 3.14.3), `pip install -e ".[dev]"` installed
-  ytmusicapi 1.12.3, rapidfuzz 3.14.6, PyYAML 6.0.3 and pytest 9.1.1. All 63 tests pass.
-- Not done: `browser.json`. Run `.\.venv\Scripts\ytmusicapi.exe browser`, then in
-  Firefox open music.youtube.com with DevTools on the Network tab. Right-click a
-  `POST` to `music.youtube.com` with status 200 (`browse?…` or `player?prettyPrint=false`),
-  choose Copy Value, then Copy Request Headers, paste it, press Enter, then Ctrl+Z and Enter.
-- Then: `.\.venv\Scripts\ytm-hygiene.exe scan "<youtube.com playlist URL>"`.
-  The playlists live on YouTube, which is fine: YouTube and YouTube Music share
-  playlists and IDs, and `scan` is read-only, so a real playlist is safe to scan.
+| | Before T2 | After T2 |
+|---|---|---|
+| Correct SWAPs | 0 of 2 possible | 2 of 2 |
+| Wrong SWAPs | 0 | 0 |
+| Misses | Sweeterman (both playlists) | Sweeterman (both playlists) |
+
+T2 changes in `match.py`:
+
+- Official videos (OMV) may be up to 75 s shorter than the song (`MAX_LONGER_OMV_S`).
+  User uploads keep the 5 s limit.
+- `artist` flag when the artist score is below 0.60 (covers and lookalikes).
+- `version:remixer` flag when both sides are remixes by different or unnamed remixers.
+- Strips "(lyrics on screen)", "(CDQ…)", "(Explicit/Clean Version)" from titles.
+- Threshold stays at 0.90. `evaluate` suggested 0.70–0.77, but that rests on one
+  unflagged correct row, and wrong unflagged rows sit at 0.73–0.77.
+
+Sweeterman is probably an unreleased leak: the cleaned search ("Drake Sweeterman")
+finds no song. Treat it as no song version, not a matcher bug.
+
+Login note: headers copied from Firefox include `content-encoding: gzip` and
+`accept-encoding: … br, zstd`, which break ytmusicapi (empty, non-JSON reply). They
+were removed from `browser.json` by hand. Document this in the README setup (T6), or
+strip them in code.
 
 ## Routing
 
@@ -42,7 +61,7 @@ Main session runs on Opus. "Main" means the work stays in the main session.
 
 ## T1. Accuracy test
 
-Run on the throwaway playlist:
+Done 2026-10-18; see T1–T2 results. Run on a playlist:
 
 1. `pip install -e ".[dev]"`, then `ytmusicapi browser`.
 2. `ytm-hygiene scan <playlist>`, fill the `verdict` column, `ytm-hygiene evaluate report.csv`.

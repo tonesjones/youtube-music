@@ -17,16 +17,19 @@ SEARCH_TYPES = {OMV, UGC, OFFICIAL_SOURCE}
 
 DEFAULT_THRESHOLD = 0.90
 MIN_USABLE = 0.60  # best candidate below this is reported as NO_MATCH
+MIN_ARTIST = 0.60  # artist score below this flags a likely cover or lookalike
 WEIGHTS = {"title": 0.50, "artist": 0.35, "duration": 0.15}
 
 # Song length relative to the video: videos carry intros/outros, songs don't.
+# Official videos are often shorter edits, so the song may run much longer.
 MAX_LONGER_S = 5
+MAX_LONGER_OMV_S = 75
 MAX_SHORTER_S = 15
 
 _NOISE = (
     r"official\s+(?:4k\s+|hd\s+)?(?:music\s+|lyric\s+)?video|official\s+audio"
-    r"|official\s+visuali[sz]er|lyric\s+video|lyrics?|audio|visuali[sz]er"
-    r"|music\s+video|video\s+oficial|4k|hd|hq"
+    r"|official\s+visuali[sz]er|lyric\s+video|lyrics?\s+on\s+screen|lyrics?|audio|visuali[sz]er"
+    r"|music\s+video|video\s+oficial|explicit\s+version|clean\s+version|cdq|4k|hd|hq"
 )
 _BRACKETED_NOISE = re.compile(rf"[(\[]\s*(?:{_NOISE})(?:\s*[/|,&]\s*(?:{_NOISE}))*\s*[)\]]", re.I)
 _TRAILING_NOISE = re.compile(rf"\s*[-|]\s*(?:{_NOISE})\s*$", re.I)
@@ -35,6 +38,7 @@ _FEAT_BRACKETED = re.compile(r"[(\[]\s*(?:feat\.?|ft\.?|featuring)\s[^)\]]*[)\]]
 _FEAT_INLINE = re.compile(r"\s(?:feat\.?|ft\.?|featuring)\s.*?(?=\s[-|]\s|[(\[]|$)", re.I)
 _EMPTY_BRACKETS = re.compile(r"[(\[]\s*[)\]]")
 _DASH = re.compile(r"\s+[-–—]\s+")
+_REMIX_BRACKET = re.compile(r"[(\[]([^)\]]*\bremix[^)\]]*)[)\]]", re.I)
 
 VERSION_TAGS = {
     "live": r"\blive\b|\ben vivo\b|\bao vivo\b",
@@ -95,6 +99,12 @@ def clean_title(title: str) -> str:
 def version_tags(title: str) -> set[str]:
     lowered = title.casefold()
     return {tag for tag, pattern in VERSION_TAGS.items() if re.search(pattern, lowered)}
+
+
+def remixer(title: str) -> str:
+    """'Shiver (DEVANK REMIX)' -> 'devank'. Empty for '(Remix)' or no bracketed remix."""
+    m = _REMIX_BRACKET.search(title)
+    return normalize(re.sub(r"\bremix(?:ed)?\b", "", m.group(1), flags=re.I)) if m else ""
 
 
 def split_artist_prefix(title: str, artist_names: list[str], force: bool) -> tuple[str | None, str]:
@@ -168,13 +178,13 @@ def artist_score(orig: Original, cand_artists: list[dict]) -> float:
     return max((fuzz.token_set_ratio(a, b) for a in ours for b in theirs), default=0) / 100
 
 
-def duration_score(video_s: int | None, song_s: int | None) -> tuple[float, int | None]:
+def duration_score(video_s: int | None, song_s: int | None, max_longer: int) -> tuple[float, int | None]:
     if video_s is None or song_s is None:
         return 0.5, None
     delta = song_s - video_s
-    if -MAX_SHORTER_S <= delta <= MAX_LONGER_S:
+    if -MAX_SHORTER_S <= delta <= max_longer:
         return 1.0, delta
-    excess = delta - MAX_LONGER_S if delta > 0 else -MAX_SHORTER_S - delta
+    excess = delta - max_longer if delta > 0 else -MAX_SHORTER_S - delta
     return max(0.0, 1 - excess / 30), delta
 
 
@@ -182,14 +192,21 @@ def score_candidate(orig: Original, cand: dict, clean: bool = False) -> Scored:
     flags = []
     t = title_score(orig.clean, clean_title(cand.get("title") or ""))
     a = artist_score(orig, cand.get("artists") or [])
-    d, delta = duration_score(seconds(orig.track), seconds(cand))
+    max_longer = MAX_LONGER_OMV_S if orig.track.get("videoType") == OMV else MAX_LONGER_S
+    d, delta = duration_score(seconds(orig.track), seconds(cand), max_longer)
     if delta is None:
         flags.append("no_duration")
     elif d < 1.0:
         flags.append("duration")
+    if a < MIN_ARTIST:
+        flags.append("artist")
 
-    mismatched = orig.tags ^ version_tags(cand.get("title") or "")
-    flags += [f"version:{tag}" for tag in sorted(mismatched)]
+    cand_tags = version_tags(cand.get("title") or "")
+    flags += [f"version:{tag}" for tag in sorted(orig.tags ^ cand_tags)]
+    if "remix" in orig.tags & cand_tags:
+        ours, theirs = remixer(orig.title), remixer(cand.get("title") or "")
+        if ours != theirs and fuzz.token_set_ratio(ours, theirs) < 80:
+            flags.append("version:remixer")
 
     orig_explicit = bool(orig.track.get("isExplicit"))
     cand_explicit = bool(cand.get("isExplicit"))
