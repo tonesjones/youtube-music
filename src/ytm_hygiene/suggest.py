@@ -73,31 +73,22 @@ def _key(meta: dict) -> tuple[str, str]:
     return normalize_artist(artists[0] if artists else ""), normalize(meta.get("title") or "")
 
 
-def suggest(
+def find_new(
     yt,
     lines: list[str],
     notes: dict[str, dict],
-    inbox_id: str,
-    today: date,
-    max_ops: int | None = 20,
-    dry_run: bool = False,
-    search_throttle: Throttle | None = None,
-    write_throttle: Throttle | None = None,
-    log_dir: Path = Path("."),
+    throttle: Throttle | None = None,
     progress=print,
 ) -> dict:
-    """Search each line, add new finds to the Inbox. Returns:
-    found (candidates to add), skipped, not_found (lines), new_notes (for songs
-    actually added; empty on a dry run) and the undo log path.
-
-    On ApplyError the exception carries .new_notes and .log so the caller can still
-    save notes for the songs that did get in."""
-    search_throttle = search_throttle or Throttle(SEARCH_DELAY_S)
+    """Search each line (one search per line, paced by `throttle`). Writes nothing.
+    Returns found (candidate songs not in notes), skipped (lines whose song is
+    already in notes) and not_found (lines)."""
+    throttle = throttle or Throttle(SEARCH_DELAY_S)
     known = {_key(m) for m in notes.values()}
     found: list[dict] = []
-    result = {"found": found, "skipped": [], "not_found": [], "new_notes": {}, "log": None}
+    result = {"found": found, "skipped": [], "not_found": []}
     for line in lines:
-        cand = find_song(yt, line, search_throttle)
+        cand = find_song(yt, line, throttle)
         if cand is None:
             result["not_found"].append(line)
             progress(f"not found: {line}")
@@ -110,6 +101,25 @@ def suggest(
         known.add(cand_key)
         found.append(cand)
         progress(f"found: {line} -> {cand['videoId']}")
+    return result
+
+
+def add_found(
+    yt,
+    found: list[dict],
+    inbox_id: str,
+    today: date,
+    max_ops: int | None = 20,
+    dry_run: bool = False,
+    write_throttle: Throttle | None = None,
+    log_dir: Path = Path("."),
+    progress=print,
+) -> dict:
+    """Add candidates from find_new to the Inbox. Returns new_notes (for songs
+    actually added; empty on a dry run) and the undo log path.
+
+    On ApplyError the exception carries .new_notes and .log so the caller can still
+    save notes for the songs that did get in."""
 
     def notes_for(video_ids) -> dict[str, dict]:
         by_id = {c["videoId"]: c for c in found}
@@ -127,7 +137,33 @@ def suggest(
     except ApplyError as e:
         e.new_notes = {} if dry_run else notes_for(e.added)
         raise
-    result["log"] = added["log"]
+    result = {"new_notes": {}, "log": added["log"]}
     if not dry_run:
         result["new_notes"] = notes_for(added["added"])
     return result
+
+
+def suggest(
+    yt,
+    lines: list[str],
+    notes: dict[str, dict],
+    inbox_id: str,
+    today: date,
+    max_ops: int | None = 20,
+    dry_run: bool = False,
+    search_throttle: Throttle | None = None,
+    write_throttle: Throttle | None = None,
+    log_dir: Path = Path("."),
+    progress=print,
+) -> dict:
+    """find_new, then add_found. Returns found (candidates to add), skipped,
+    not_found (lines), new_notes (for songs actually added; empty on a dry run) and
+    the undo log path.
+
+    On ApplyError the exception carries .new_notes and .log so the caller can still
+    save notes for the songs that did get in."""
+    found = find_new(yt, lines, notes, search_throttle, progress)
+    added = add_found(
+        yt, found["found"], inbox_id, today, max_ops, dry_run, write_throttle, log_dir, progress
+    )
+    return {**found, **added}

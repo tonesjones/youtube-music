@@ -26,8 +26,10 @@ def root() -> None:
         with ui.tabs().props("vertical no-caps inline-label").classes("w-full") as tabs:
             tab = {key: ui.tab(key, label=label, icon=icon) for key, label, icon, _ in SCREENS}
     first = "cleanup" if state.signed_in else "setup"
-    with ui.tab_panels(tabs, value=tab[first]).classes("w-full bg-transparent"):
+    on_show = {}  # screens whose build() returns a callable get it called each time they are opened
+    with ui.tab_panels(tabs, value=tab[first]).classes("w-full bg-transparent") as panels:
         for key, label, _, module in SCREENS:
             with ui.tab_panel(tab[key]):
                 ui.label(label).classes("text-h5")
-                module.build(state)
+                on_show[key] = module.build(state)
+    panels.on_value_change(lambda e: callable(on_show.get(e.value)) and on_show[e.value]())

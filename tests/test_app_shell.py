@@ -44,4 +44,4 @@ def test_ready_user_sees_all_screens(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     (tmp_path / settings.AUTH_NAME).write_text("{}")
     settings.save(tmp_path / settings.CONFIG_NAME, {"vault": "v", "inbox": "a", "rotation": "b"})
-    _open("Coming soon.")
+    _open("Swap music videos in a playlist")

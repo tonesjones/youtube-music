@@ -34,7 +34,14 @@ media, keep request volume low, `browser.json` auth only (never OAuth).
   plain words (Ready to swap / Please check these / No song version found), tick
   or mark Looks right / Wrong, confirm, swap 20 at a time. 143 tests pass. Not
   yet run on a real playlist. The confirm dialog points to History, which U6 builds.
-- Next: U4 (Inbox screen), U5, U6.
+- U4–U6 done 2026-10-18 (worker built U4, scouts built U5 and U6 in parallel;
+  Main reviewed all three and made small fixes). Inbox: one check, plain-word
+  groups, apply ticked moves. Suggestions: copy taste summary, paste reply, find,
+  add ticked songs (`suggest.py` split into `find_new` and `add_found` so the app
+  searches once). History: every run newest first, Undo renames the log to
+  `undone-*.json`; the list reloads whenever the tab opens. 162 tests pass.
+  None of the screens has touched a real account yet.
+- Next: try the app on real playlists, then U7 (`.exe`) and U8 (README).
 
 ## T1–T2 results (2026-10-18)
 
@@ -319,9 +326,9 @@ Plain words throughout: "music video" and "song", never OMV/UGC/ATV;
 | U1 | App shell: window, navigation, settings load/save | Main, done | approval |
 | U2 | Setup wizard (sign-in paste + header cleanup + test, vault picker, playlist dropdowns) | Main (touches auth), done | U1 |
 | U3 | Clean-up screen over `scan` + `apply_rows` | Sonnet (`worker`), done | U1 |
-| U4 | Inbox screen over `sync` + `apply_moves` | Sonnet (`worker`) | U1 |
-| U5 | Suggestions screen over `suggest` | Haiku (`scout`) | U1 |
-| U6 | History + undo screen | Haiku (`scout`) | U1 |
+| U4 | Inbox screen over `sync` + `apply_moves` | Sonnet (`worker`), done | U1 |
+| U5 | Suggestions screen over `suggest` | Haiku (`scout`), done | U1 |
+| U6 | History + undo screen | Haiku (`scout`), done | U1 |
 | U7 | Package as a Windows `.exe` with a Start-menu shortcut | Sonnet (`worker`) | U2–U6 |
 | U8 | README rewritten for app users first, CLI second | Main, `technical-writing` | U7 |
 
