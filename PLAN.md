@@ -13,7 +13,11 @@ media, keep request volume low, `browser.json` auth only (never OAuth).
 - Not yet run against YouTube: `apply` and `undo`. Start with
   `apply report.csv --allow-playlist <id> --dry-run`, then a real run with
   `--max-ops 1`, then `undo` on that log.
-- Next: approve the T8 design below, then build it.
+- T8 (`suggest`) and T9 (`sync --apply`) built 2026-10-18 by the worker; Main
+  reviewed the diff and added two guards (`suggest --seed` needs no
+  browser.json; sync refuses to apply moves when Inbox and Rotation are the
+  same playlist). 125 tests pass. Neither has run against YouTube yet.
+- Next: the expiry decision below.
 
 ## T1–T2 results (2026-10-18)
 
@@ -58,7 +62,8 @@ Main session runs on Opus. "Main" means the work stays in the main session.
 | T5 | Tests for the new sync rules | Haiku (`scout`), done | T4 |
 | T6 | Update README | Main, `technical-writing` skill, done | T4, T7 |
 | T7 | `apply` + `undo` | Sonnet (`worker`), Main reviewed the diff, done | Approval of T1–T2 |
-| T8 | Suggest step | Design: Main. Build: Sonnet (`worker`), flagged (playlist writes) | T7, design approval |
+| T8 | Suggest step | Sonnet (`worker`) P3, Main reviewed the diff, done | T7; design approved 2026-10-18 |
+| T9 | Apply sync moves | Sonnet (`worker`) P3, Main reviewed the diff, done | T7; approved 2026-10-18 |
 
 ## T1. Accuracy test
 
@@ -189,7 +194,7 @@ check reads the playlist once and skips rows whose item is gone.
 Nice later: `undo` keeps no log of its own, so an undo that stops partway can't
 be resumed cleanly. A re-run fails safely at the first add instead.
 
-## T8. Suggest step (design, awaiting approval)
+## T8. Suggest step (design approved 2026-10-18)
 
 Claude suggests new songs for the Inbox; the vault tracks how many get kept.
 
@@ -214,14 +219,33 @@ Done when:
 - `undo` on the log removes the added songs.
 - Tests with a fake client cover each point; all tests pass.
 
-Open for T8: the minimum match score for an add (proposal: 0.85 on title +
-artist, otherwise listed as not found).
+Minimum match score for an add: 0.85 on title + artist (approved), and no
+`version:` flag; otherwise listed as not found. Also skipped: a song whose
+normalized artist and title match an existing note, even with another videoId.
+
+## T9. Apply sync moves (approved 2026-10-18)
+
+`ytm-hygiene sync --apply` carries out the moves sync proposes, after it saves
+the notes and `sync-state.yaml`. Without `--apply`, sync only prints them, as now.
+
+- `promote`: add to Rotation (skip the add if it's already there), then remove
+  from Inbox.
+- `remove_inbox`, `remove_rotation`: remove from that playlist.
+- Allowed playlists: only the configured Inbox and Rotation. Sync never writes
+  anywhere else, so it needs no `--allow-playlist`.
+- `--dry-run` (with `--apply`) prints the writes and makes none. `--max-ops`
+  caps moves per run (default 20). Same 1.5 s throttle and stop on first error.
+- Removes use the setVideoIds from the playlists sync already fetched: no extra reads.
+- The undo log records each step's playlist, so one log covers both playlists.
+  `undo --allow-playlist` can be given more than once, and every playlist in
+  the log must be allowed. A removal with no replacement is undone by adding
+  the song back at the end of the playlist.
+
+Done when: fake-client tests cover each point, the existing apply and undo tests
+still pass, sync without `--apply` makes no writes, and Main has reviewed the diff.
 
 ## Open decisions
 
-- T8 design above: approve or change it before it gets built.
-- Sync prints moves (promote, remove from Inbox or Rotation) but nothing applies
-  them yet. Should a later task let `apply` run them, with the same safety rules?
 - Expiry follows the approved rule "never heard". A song heard in exactly one
   sync never expires and stays in the Inbox until you rate it. Keep, or also
   expire it after more syncs?

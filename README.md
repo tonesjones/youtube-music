@@ -7,8 +7,8 @@ playlists and never downloads media.
 YouTube and YouTube Music share playlists, so a playlist you made on YouTube
 works here with the same ID.
 
-Status: `backup`, `scan`, `evaluate`, `apply`, `undo` and `sync` work. `sync`
-writes only to your Obsidian vault and prints the playlist moves it proposes.
+Status: `backup`, `scan`, `evaluate`, `apply`, `undo`, `sync` and `suggest`
+work. `apply`, `sync --apply` and `suggest` haven't been run against YouTube yet.
 
 ## Setup
 
@@ -115,7 +115,9 @@ To reverse a run, including one that stopped partway:
 ytm-hygiene undo undo-20261018-120000.json --allow-playlist <playlist-id>
 ```
 
-`undo` also takes `--dry-run`. It writes no log of its own.
+`undo` also takes `--dry-run`. It writes no log of its own. For a log that
+covers two playlists, such as one from `sync --apply`, give `--allow-playlist`
+once for each.
 
 ## Curation: Obsidian song log
 
@@ -139,7 +141,20 @@ playlists and your history). It writes one note per song to `Music/Songs/`,
 then `Music/sync-state.yaml`, and creates `Music/Music Dashboard.md` once. The
 dashboard needs the Dataview plugin.
 
-Sync doesn't change YouTube. It prints the playlist moves it proposes.
+Sync prints the playlist moves it proposes. To carry them out, add `--apply`:
+
+```sh
+ytm-hygiene sync --apply --dry-run   # print the writes, make none
+ytm-hygiene sync --apply
+```
+
+- A promote adds the song to Rotation, then removes it from the Inbox. Other
+  moves remove the song from the Inbox or Rotation.
+- Moves run only after the notes and `sync-state.yaml` are saved.
+- Sync writes only to the configured Inbox and Rotation.
+- `--max-ops` caps the moves per run (default 20). Writes are at least 1.5 s
+  apart, sync stops on the first error, and every write goes to an undo log,
+  as with `apply`.
 
 ### What counts as heard
 
@@ -175,6 +190,32 @@ new fields and drops `heard_days`. An older dashboard still shows the
 `heard_days` column. Delete it, and the next sync writes the new one.
 
 Skips aren't visible in YouTube data.
+
+## Suggestions from Claude
+
+`suggest` adds songs Claude recommends to the Inbox. The dashboard's hit rate
+by source table then shows how many of them you keep.
+
+1. Print a taste summary of your keepers and rejected songs. This makes no requests:
+
+   ```sh
+   ytm-hygiene suggest --seed
+   ```
+
+2. Paste it into a Claude chat. Save the reply, one `Artist - Title` per line,
+   to a text file such as `songs.txt`.
+3. Check what would be added, then add it:
+
+   ```sh
+   ytm-hygiene suggest songs.txt --dry-run
+   ytm-hygiene suggest songs.txt
+   ```
+
+`suggest` searches once per line, 1 s apart. It adds a song only when the best
+Art Track scores at least 0.85 on title and artist and has the same version
+tags as the line. It skips songs that already have a note, in any status, so a
+rejected song never comes back. New notes get `source: claude`. `--max-ops`
+caps the adds per run (default 20), and `undo` removes them.
 
 ## Tests
 

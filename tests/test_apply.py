@@ -71,8 +71,8 @@ def run(yt, rows, tmp_path, **kw):
     return apply_rows(yt, rows, PID, log_dir=tmp_path, backup_dir=tmp_path / "b", **kw)
 
 
-def quiet_undo(yt, log, allow=PID, **kw):
-    return undo(yt, log, allow, throttle=NoThrottle(), progress=lambda *_: None, **kw)
+def quiet_undo(yt, log, allow=(PID,), **kw):
+    return undo(yt, log, list(allow), throttle=NoThrottle(), progress=lambda *_: None, **kw)
 
 
 def test_row_selection():
@@ -138,7 +138,8 @@ def test_stop_on_first_error_log_has_completed_steps(tmp_path):
     assert len(yt.writes()) == 2
     log = json.loads(next(tmp_path.glob("undo-*.json")).read_text())
     assert [s["op"] for s in log["steps"]] == ["add"]
-    assert log["playlist_id"] == PID
+    assert log["playlist_ids"] == [PID]
+    assert all(s["playlist_id"] == PID for s in log["steps"])
 
 
 def test_exception_is_error(tmp_path):
@@ -188,6 +189,6 @@ def test_undo_refuses_wrong_playlist_and_dry_run(tmp_path):
     log = run(FakeYT(tracks(1)), [row(1)], tmp_path)["log"]
     yt2 = FakeYT([])
     with pytest.raises(ValueError):
-        quiet_undo(yt2, log, allow="OTHER")
+        quiet_undo(yt2, log, allow=["OTHER"])
     quiet_undo(yt2, log, dry_run=True)
     assert yt2.calls == []
