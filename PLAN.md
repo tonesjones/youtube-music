@@ -20,7 +20,7 @@ media, keep request volume low, `browser.json` auth only (never OAuth).
 - Expiry extended 2026-10-18 (your call): a song heard in 1 sync, then not
   again for 3 syncs and 30 days, also expires. Notes count `quiet_syncs`
   (Inbox syncs since the last play). 128 tests pass.
-- Next: try the write commands on real playlists, starting with `--dry-run`.
+- Next: the desktop app plan (U1–U8 below), waiting for your approval.
 
 ## T1–T2 results (2026-10-18)
 
@@ -248,6 +248,87 @@ the notes and `sync-state.yaml`. Without `--apply`, sync only prints them, as no
 Done when: fake-client tests cover each point, the existing apply and undo tests
 still pass, sync without `--apply` makes no writes, and Main has reviewed the diff.
 
+## Desktop app (draft 2026-10-18, waiting for approval)
+
+Goal: a first-time user can clean up a playlist and curate the Inbox without a
+terminal, playlist IDs, CSV files or terms like OMV and ATV. The CLI stays for
+tests and power use; the app calls the same functions.
+
+### Toolkit: NiceGUI in native mode (recommended)
+
+A Python UI library that opens its own desktop window (through pywebview), so
+the app stays in Python and small enough for you to review.
+
+| Option | For | Against |
+|---|---|---|
+| **NiceGUI 3.x + pywebview 6.x** | Python only; ready-made tables, dialogs, progress bars and file pickers; can be packaged as one `.exe` | Two new dependencies (both MIT/BSD, released monthly, widely used) |
+| Tkinter | Built into Python, no new dependency | Tables and layout take a lot of code and look dated |
+| PySide6 (Qt) | Most native look | Large dependency, much more code |
+| Electron or Tauri | Polished | A second language (JavaScript) and a build chain |
+
+Dependency risk: NiceGUI runs a local web server bound to 127.0.0.1 inside the
+app. Pin exact versions. No install scripts beyond normal wheels.
+
+### Screens
+
+1. **First-run setup** (wizard, 3 steps):
+   - Sign in: a page with pictures that shows where to copy the request headers
+     in Chrome, Edge or Firefox, one paste box, and a **Test** button. The app
+     strips the headers that break ytmusicapi (the Firefox issue) and writes
+     `browser.json`. Never OAuth, never a password field.
+   - Obsidian vault: a folder picker.
+   - Inbox and Rotation: dropdowns of your playlists by name (one read), with a
+     **Create it for me** option.
+   Saves `ytm-hygiene.toml`; nobody types an ID.
+2. **Clean up a playlist** (scan + apply): pick a playlist by name, press
+   **Scan**, watch a progress bar. Results show side by side: *the video you
+   have* and *the song we found*, each with a play link, plus a plain reason
+   ("same song, same artist" / "different version: live"). Sure matches come
+   ticked; doubtful ones unticked, with a **Looks right / Wrong** choice that
+   fills the verdict. **Swap N songs** asks once to confirm, then shows
+   progress.
+3. **Inbox** (sync): **Check what I've listened to** runs sync and shows three
+   groups: songs to keep (move to Rotation), songs to drop, songs still on
+   trial with how often you've heard them. **Apply** carries out the ticked moves.
+4. **Get suggestions**: **Copy my taste summary** puts the seed on the
+   clipboard; paste Claude's reply into a box; **Find songs** shows what was
+   found; **Add to Inbox**.
+5. **History**: every write run with date, what changed, and an **Undo** button.
+
+Plain words throughout: "music video" and "song", never OMV/UGC/ATV;
+"play count since last check", never anchor.
+
+### Tasks
+
+| ID | Task | Tier | Depends on |
+|---|---|---|---|
+| U1 | App shell: window, navigation, settings load/save | Main | approval |
+| U2 | Setup wizard (sign-in paste + header cleanup + test, vault picker, playlist dropdowns) | Main (touches auth) | U1 |
+| U3 | Clean-up screen over `scan` + `apply_rows` | Sonnet (`worker`) | U1 |
+| U4 | Inbox screen over `sync` + `apply_moves` | Sonnet (`worker`) | U1 |
+| U5 | Suggestions screen over `suggest` | Haiku (`scout`) | U1 |
+| U6 | History + undo screen | Haiku (`scout`) | U1 |
+| U7 | Package as a Windows `.exe` with a Start-menu shortcut | Sonnet (`worker`) | U2–U6 |
+| U8 | README rewritten for app users first, CLI second | Main, `technical-writing` | U7 |
+
+Done when:
+
+- U1: `ytm-hygiene-app` opens a window; no terminal input needed afterwards.
+- U2: with no `browser.json`, the app opens on the wizard; a bad paste shows a
+  plain error; a good one passes **Test** with one read request; Firefox headers
+  work without hand edits; `browser.json` stays git-ignored.
+- U3–U6: every action that writes to YouTube shows a confirm dialog with the
+  count, runs with the same throttle, max-ops and undo log as the CLI, and the
+  UI stays responsive (work runs off the UI thread). Logic stays in the
+  existing modules; UI files hold no matching or sync rules.
+- U3–U6: tests drive each screen's handlers with the fake client (NiceGUI's
+  test `User` fixture), no network.
+- U7: one `.exe` runs on a PC without Python installed.
+- U8: a first-time user can follow the README from download to first swap.
+- All of them: request volume no higher than the CLI (no auto-refresh or
+  background polling).
+
 ## Open decisions
 
-- None.
+- Desktop app: approve NiceGUI (or pick another toolkit from the table).
+- Desktop app: package as an `.exe` (U7) now, or run it from the venv first?
