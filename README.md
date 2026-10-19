@@ -4,7 +4,7 @@ Replaces music videos in a YouTube Music playlist with their audio-only song
 versions (Art Tracks), so offline downloads take less space. It only edits
 playlists and never downloads media.
 
-Status: `backup`, `scan` and `evaluate` work. `apply` and `undo` aren't built
+Status: `backup`, `scan`, `evaluate` and `sync` (vault only) work. `apply` and `undo` aren't built
 yet; they come after the accuracy test.
 
 ## Setup
@@ -71,6 +71,43 @@ Candidates must be available Art Tracks.
 
 `report.csv` has two columns beyond the spec, `playlist_id` and
 `old_setVideoId`, for `apply` to use later.
+
+## Curation: Obsidian song log
+
+This uses two playlists you create in YouTube Music:
+
+- **Inbox:** new songs on trial.
+- **Rotation:** proven keepers, downloaded on your phone.
+
+```sh
+ytm-hygiene sync --vault ~/Obsidian/MyVault --inbox <inbox-id> --rotation <rotation-id>
+```
+
+It makes three read requests (both playlists and your history). It then writes
+one note per song to `Music/Songs/` and creates `Music/Music Dashboard.md`
+once. The dashboard needs the Dataview plugin.
+
+It doesn't change YouTube yet. It prints the playlist moves it would make;
+applying them comes later with `apply`.
+
+An Inbox song is decided by the first rule that matches:
+
+| Signal | Result |
+|---|---|
+| Thumbs up | keeper, moves to Rotation |
+| Thumbs down | rejected, removed from Inbox |
+| Heard on 2 different days | keeper |
+| Nothing after 14 days (`--expire-days`) | expired, removed from Inbox |
+
+A thumbs down on a Rotation song marks it rejected. You can also set `status`
+(inbox / keeper / rejected) in any note yourself, and the next sync proposes
+the matching move. Sync only changes a note's properties; anything you write
+in the note body is kept.
+
+Listening history has no timestamps or play counts, only buckets like
+"Today" and "This week". A day counts as heard only when the song shows up
+under "Today" or "Yesterday", so run sync daily. Skips aren't visible in
+YouTube data.
 
 ## Tests
 

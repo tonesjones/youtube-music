@@ -5,11 +5,12 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "ytm-hygiene"
 version = "0.1.0"
-description = "Swap music videos for audio-only songs in YouTube Music playlists."
+description = "Keep YouTube Music playlists audio-only and curated, with an Obsidian song log."
 requires-python = ">=3.11"
 dependencies = [
     "ytmusicapi>=1.12,<2",
     "rapidfuzz>=3.0",
+    "pyyaml>=6",
 ]
 
 [project.optional-dependencies]
