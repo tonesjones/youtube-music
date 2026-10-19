@@ -11,6 +11,20 @@ media, keep request volume low, `browser.json` auth only (never OAuth).
 - Next: T1 (accuracy test). Waiting on the scan run and verdicts.
 - Blocked: T7 `apply` / `undo` waits for approval of the accuracy results (T1–T2).
 
+## Checkpoint (2026-10-18)
+
+Where T1 stopped:
+
+- Done: `.venv` created (Python 3.14.3), `pip install -e ".[dev]"` installed
+  ytmusicapi 1.12.3, rapidfuzz 3.14.6, PyYAML 6.0.3 and pytest 9.1.1. All 63 tests pass.
+- Not done: `browser.json`. Run `.\.venv\Scripts\ytmusicapi.exe browser`, then in
+  Firefox open music.youtube.com with DevTools on the Network tab. Right-click a
+  `POST` to `music.youtube.com` with status 200 (`browse?…` or `player?prettyPrint=false`),
+  choose Copy Value, then Copy Request Headers, paste it, press Enter, then Ctrl+Z and Enter.
+- Then: `.\.venv\Scripts\ytm-hygiene.exe scan "<youtube.com playlist URL>"`.
+  The playlists live on YouTube, which is fine: YouTube and YouTube Music share
+  playlists and IDs, and `scan` is read-only, so a real playlist is safe to scan.
+
 ## Routing
 
 Main session runs on Opus. "Main" means the work stays in the main session.
@@ -155,3 +169,6 @@ table already tracks how many get kept. Design after T7.
 ## Open decisions
 
 - None for T3–T4. The anchor approach and TOML config are approved (2026-10-18).
+- T7: swap in place or on a copy? The playlists are YouTube playlists, so a swap
+  in place also replaces the video with the song on youtube.com. A copy keeps the
+  original playlist as it is. Decide before T7.
