@@ -24,7 +24,12 @@ media, keep request volume low, `browser.json` auth only (never OAuth).
   screens work). U1 done: `ytm-hygiene-app` opens a window with the five screens;
   Setup shows what's configured, the others are placeholders. Settings live in
   `settings.py`, shared with the CLI. 132 tests pass.
-- Next: U2 (setup wizard), then U3–U6.
+- U2 done 2026-10-18: Setup is a 3-step wizard. Sign in by pasting headers
+  (`auth.py` cleans them, including the Firefox ones, checks them with one
+  read, and only then writes `browser.json`), pick the vault (Browse button in
+  the desktop window), pick or create the Inbox and Rotation by name. Vault and
+  playlists can be skipped. 137 tests pass. Not yet tried with real headers.
+- Next: U3 (clean-up screen), then U4–U6.
 
 ## T1–T2 results (2026-10-18)
 
@@ -307,7 +312,7 @@ Plain words throughout: "music video" and "song", never OMV/UGC/ATV;
 | ID | Task | Tier | Depends on |
 |---|---|---|---|
 | U1 | App shell: window, navigation, settings load/save | Main, done | approval |
-| U2 | Setup wizard (sign-in paste + header cleanup + test, vault picker, playlist dropdowns) | Main (touches auth) | U1 |
+| U2 | Setup wizard (sign-in paste + header cleanup + test, vault picker, playlist dropdowns) | Main (touches auth), done | U1 |
 | U3 | Clean-up screen over `scan` + `apply_rows` | Sonnet (`worker`) | U1 |
 | U4 | Inbox screen over `sync` + `apply_moves` | Sonnet (`worker`) | U1 |
 | U5 | Suggestions screen over `suggest` | Haiku (`scout`) | U1 |
@@ -334,6 +339,4 @@ Done when:
 
 ## Open decisions
 
-- App files: the app uses the current folder when it holds `browser.json` or
-  `ytm-hygiene.toml` (running from the repo), otherwise `%APPDATA%\ytm-hygiene`.
-  Fine for the `.exe` too?
+- None. (App files in `%APPDATA%\ytm-hygiene` approved 2026-10-18.)

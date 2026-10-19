@@ -37,7 +37,7 @@ def _open(*texts):
 
 def test_new_user_lands_on_setup_with_nothing_done(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
-    _open("Clean up a playlist", "Inbox", "Get suggestions", "History", "Signed in to YouTube Music")
+    _open("Clean up a playlist", "Inbox", "Get suggestions", "History", "How to copy the headers")
 
 
 def test_ready_user_sees_all_screens(tmp_path, monkeypatch):

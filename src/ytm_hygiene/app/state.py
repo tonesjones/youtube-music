@@ -23,10 +23,5 @@ class AppState:
     def signed_in(self) -> bool:
         return self.auth_path.exists()
 
-    @property
-    def ready(self) -> bool:
-        """Signed in, with a vault and both playlists chosen."""
-        return self.signed_in and all(self.settings.get(k) for k in ("vault", "inbox", "rotation"))
-
     def save(self) -> None:
         settings.save(self.base / settings.CONFIG_NAME, self.settings)

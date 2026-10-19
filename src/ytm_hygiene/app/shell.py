@@ -25,7 +25,7 @@ def root() -> None:
     with ui.left_drawer(fixed=True).props("width=220 bordered breakpoint=0"):
         with ui.tabs().props("vertical no-caps inline-label").classes("w-full") as tabs:
             tab = {key: ui.tab(key, label=label, icon=icon) for key, label, icon, _ in SCREENS}
-    first = "cleanup" if state.ready else "setup"
+    first = "cleanup" if state.signed_in else "setup"
     with ui.tab_panels(tabs, value=tab[first]).classes("w-full bg-transparent"):
         for key, label, _, module in SCREENS:
             with ui.tab_panel(tab[key]):
