@@ -29,7 +29,12 @@ media, keep request volume low, `browser.json` auth only (never OAuth).
   read, and only then writes `browser.json`), pick the vault (Browse button in
   the desktop window), pick or create the Inbox and Rotation by name. Vault and
   playlists can be skipped. 137 tests pass. Not yet tried with real headers.
-- Next: U3 (clean-up screen), then U4–U6.
+- U3 done 2026-10-18 (worker built it, Main reviewed the diff and fixed two
+  bugs): pick a playlist by name, check it with a progress bar, see results in
+  plain words (Ready to swap / Please check these / No song version found), tick
+  or mark Looks right / Wrong, confirm, swap 20 at a time. 143 tests pass. Not
+  yet run on a real playlist. The confirm dialog points to History, which U6 builds.
+- Next: U4 (Inbox screen), U5, U6.
 
 ## T1–T2 results (2026-10-18)
 
@@ -313,7 +318,7 @@ Plain words throughout: "music video" and "song", never OMV/UGC/ATV;
 |---|---|---|---|
 | U1 | App shell: window, navigation, settings load/save | Main, done | approval |
 | U2 | Setup wizard (sign-in paste + header cleanup + test, vault picker, playlist dropdowns) | Main (touches auth), done | U1 |
-| U3 | Clean-up screen over `scan` + `apply_rows` | Sonnet (`worker`) | U1 |
+| U3 | Clean-up screen over `scan` + `apply_rows` | Sonnet (`worker`), done | U1 |
 | U4 | Inbox screen over `sync` + `apply_moves` | Sonnet (`worker`) | U1 |
 | U5 | Suggestions screen over `suggest` | Haiku (`scout`) | U1 |
 | U6 | History + undo screen | Haiku (`scout`) | U1 |

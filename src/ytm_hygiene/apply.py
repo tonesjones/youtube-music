@@ -125,7 +125,7 @@ def apply_rows(
     """Swap each selected row's track in place. Returns counts and the undo log path."""
     selected = select_rows(rows)
     _check_allowed({r["playlist_id"] for r in selected}, allow_playlist)
-    result = {"selected": len(selected), "swapped": 0, "stale": 0, "log": None}
+    result = {"selected": len(selected), "swapped": 0, "stale": 0, "log": None, "positions": []}
     if not selected:
         return result
 
@@ -155,6 +155,7 @@ def apply_rows(
         w.move_before(new_set, r["old_setVideoId"])
         w.remove(r["old_videoId"], r["old_setVideoId"], new_setVideoId=new_set)
         result["swapped"] += 1
+        result["positions"].append(r["position"])
     return result
 
 
