@@ -20,7 +20,11 @@ media, keep request volume low, `browser.json` auth only (never OAuth).
 - Expiry extended 2026-10-18 (your call): a song heard in 1 sync, then not
   again for 3 syncs and 30 days, also expires. Notes count `quiet_syncs`
   (Inbox syncs since the last play). 128 tests pass.
-- Next: the desktop app plan (U1–U8 below), waiting for your approval.
+- Desktop app plan approved 2026-10-18 (NiceGUI, venv first, `.exe` after the
+  screens work). U1 done: `ytm-hygiene-app` opens a window with the five screens;
+  Setup shows what's configured, the others are placeholders. Settings live in
+  `settings.py`, shared with the CLI. 132 tests pass.
+- Next: U2 (setup wizard), then U3–U6.
 
 ## T1–T2 results (2026-10-18)
 
@@ -248,7 +252,7 @@ the notes and `sync-state.yaml`. Without `--apply`, sync only prints them, as no
 Done when: fake-client tests cover each point, the existing apply and undo tests
 still pass, sync without `--apply` makes no writes, and Main has reviewed the diff.
 
-## Desktop app (draft 2026-10-18, waiting for approval)
+## Desktop app (approved 2026-10-18)
 
 Goal: a first-time user can clean up a playlist and curate the Inbox without a
 terminal, playlist IDs, CSV files or terms like OMV and ATV. The CLI stays for
@@ -302,7 +306,7 @@ Plain words throughout: "music video" and "song", never OMV/UGC/ATV;
 
 | ID | Task | Tier | Depends on |
 |---|---|---|---|
-| U1 | App shell: window, navigation, settings load/save | Main | approval |
+| U1 | App shell: window, navigation, settings load/save | Main, done | approval |
 | U2 | Setup wizard (sign-in paste + header cleanup + test, vault picker, playlist dropdowns) | Main (touches auth) | U1 |
 | U3 | Clean-up screen over `scan` + `apply_rows` | Sonnet (`worker`) | U1 |
 | U4 | Inbox screen over `sync` + `apply_moves` | Sonnet (`worker`) | U1 |
@@ -330,5 +334,6 @@ Done when:
 
 ## Open decisions
 
-- Desktop app: approve NiceGUI (or pick another toolkit from the table).
-- Desktop app: package as an `.exe` (U7) now, or run it from the venv first?
+- App files: the app uses the current folder when it holds `browser.json` or
+  `ytm-hygiene.toml` (running from the repo), otherwise `%APPDATA%\ytm-hygiene`.
+  Fine for the `.exe` too?

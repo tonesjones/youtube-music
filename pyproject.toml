@@ -14,10 +14,12 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=8"]
+app = ["nicegui==3.18.0", "pywebview==6.2.1"]
+dev = ["pytest>=8", "ytm-hygiene[app]"]
 
 [project.scripts]
 ytm-hygiene = "ytm_hygiene.cli:main"
+ytm-hygiene-app = "ytm_hygiene.app:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

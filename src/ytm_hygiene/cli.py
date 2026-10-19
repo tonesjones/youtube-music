@@ -2,7 +2,6 @@
 
 import argparse
 import sys
-import tomllib
 from datetime import date
 from pathlib import Path
 
@@ -11,11 +10,13 @@ from .client import Throttle, make_client, normalize_playlist_id
 from .evaluate import evaluate
 from .match import DEFAULT_THRESHOLD
 from .scan import read_report, save_backup, scan_playlist, write_report
+from .settings import CONFIG_NAME, KEYS
+from .settings import load as load_settings
 from .suggest import parse_lines, seed, suggest
 from .sync import DEFAULT_EXPIRE_DAYS, sync
 from .vault import load_songs, load_state, save_songs, save_state
 
-DEFAULT_CONFIG = Path("ytm-hygiene.toml")
+DEFAULT_CONFIG = Path(CONFIG_NAME)
 
 
 def _fetch(args):
@@ -68,13 +69,10 @@ def cmd_undo(args) -> None:
 
 def _apply_config(args, required: tuple[str, ...] = ("vault", "inbox", "rotation")) -> None:
     """Fill settings left off the command line from the TOML config."""
-    config = {}
-    if args.config.exists():
-        with args.config.open("rb") as f:
-            config = tomllib.load(f)
-    elif args.config != DEFAULT_CONFIG:
+    if not args.config.exists() and args.config != DEFAULT_CONFIG:
         sys.exit(f"{args.config} not found")
-    for key in ("vault", "inbox", "rotation", "expire_days"):
+    config = load_settings(args.config)
+    for key in KEYS:
         if getattr(args, key, None) is None:
             setattr(args, key, config.get(key))
     missing = [key for key in required if not getattr(args, key)]
