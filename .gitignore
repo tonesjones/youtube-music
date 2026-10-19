@@ -6,6 +6,7 @@ oauth.json
 backups/
 report*.csv
 undo-*.json
+ytm-hygiene.toml
 
 __pycache__/
 *.egg-info/

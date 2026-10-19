@@ -1,0 +1,5 @@
+# Copy to ytm-hygiene.toml (git-ignored) and fill in. Command-line flags override these.
+vault = "C:/Users/me/Obsidian/MyVault"
+inbox = "PL..."      # Inbox playlist ID or URL
+rotation = "PL..."   # Rotation playlist ID or URL
+# expire_days = 30

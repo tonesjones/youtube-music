@@ -10,6 +10,7 @@ import yaml
 
 SONGS_DIR = Path("Music/Songs")
 DASHBOARD = Path("Music/Music Dashboard.md")
+STATE = Path("Music/sync-state.yaml")
 
 _FRONTMATTER = re.compile(r"\A---\n(.*?)\n---\n?(.*)\Z", re.S)
 _UNSAFE = re.compile(r'[\\/:*?"<>|#^\[\]]')
@@ -22,7 +23,7 @@ Needs the Dataview community plugin. Change a song's `status` in its note
 
 ## Inbox
 ```dataview
-TABLE artists, added, length(heard_days) AS days_heard, like
+TABLE artists, added, length(heard_syncs) AS syncs_heard, inbox_syncs, like
 FROM "Music/Songs" WHERE status = "inbox" SORT added ASC
 ```
 
@@ -101,3 +102,17 @@ def save_songs(vault: Path, existing: dict, updated: dict[str, dict]) -> int:
         dashboard.parent.mkdir(parents=True, exist_ok=True)
         dashboard.write_text(DASHBOARD_TEXT, encoding="utf-8")
     return written
+
+
+def load_state(vault: Path) -> dict:
+    """last_sync and anchor from the previous sync; empty before the first one."""
+    path = vault / STATE
+    if not path.exists():
+        return {}
+    return yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+
+
+def save_state(vault: Path, state: dict) -> None:
+    path = vault / STATE
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(yaml.dump(state, Dumper=_NoAliasDumper, sort_keys=False), encoding="utf-8")

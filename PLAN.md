@@ -7,12 +7,13 @@ media, keep request volume low, `browser.json` auth only (never OAuth).
 
 ## Status
 
-- Done: `backup`, `scan`, `evaluate`, `sync` (vault writes only). T1 and T2
-  (accuracy test and tuning) approved 2026-10-18. 73 tests pass.
-- Next: T3–T4 (sync rework). T7 is unblocked but still needs the in-place vs copy
-  decision below.
-- README is behind T2: it still says songs may run at most 5 s longer and lists no
-  `artist` or `version:remixer` flags. Fold that into T6.
+- Done: `backup`, `scan`, `evaluate`. T1–T2 approved 2026-10-18. T3–T7 built
+  2026-10-18: sync rework with TOML config and vault anchor, sync tests, README,
+  `apply` + `undo` (in place, your choice).
+- Not yet run against YouTube: `apply` and `undo`. Start with
+  `apply report.csv --allow-playlist <id> --dry-run`, then a real run with
+  `--max-ops 1`, then `undo` on that log.
+- Next: approve the T8 design below, then build it.
 
 ## T1–T2 results (2026-10-18)
 
@@ -52,12 +53,12 @@ Main session runs on Opus. "Main" means the work stays in the main session.
 |---|---|---|---|
 | T1 | Review accuracy results | Main | Scan run + verdicts |
 | T2 | Tune match settings | Main | T1 |
-| T3 | Write the sync rules (this file) | Main | none |
-| T4 | Build sync rework + config | Main | T3 |
-| T5 | Tests for the new sync rules | Haiku (`scout`) | T4 |
-| T6 | Update README | Main, `technical-writing` skill | T4 |
-| T7 | `apply` + `undo` | Sonnet (`worker`), flagged: Main reviews the diff | Approval of T1–T2 |
-| T8 | Suggest step | Not routed yet | T7 |
+| T3 | Write the sync rules (this file) | Main, done | none |
+| T4 | Build sync rework + config | Main, done | T3 |
+| T5 | Tests for the new sync rules | Haiku (`scout`), done | T4 |
+| T6 | Update README | Main, `technical-writing` skill, done | T4, T7 |
+| T7 | `apply` + `undo` | Sonnet (`worker`), Main reviewed the diff, done | Approval of T1–T2 |
+| T8 | Suggest step | Design: Main. Build: Sonnet (`worker`), flagged (playlist writes) | T7, design approval |
 
 ## T1. Accuracy test
 
@@ -164,7 +165,7 @@ Done when (T5), one test each:
 Done when (T6): the README sync section matches the rules above, and the
 "run sync daily" advice is gone.
 
-## T7. apply + undo (blocked until you approve T1–T2)
+## T7. apply + undo (done 2026-10-18, in place)
 
 Follows the safety spec in the README:
 
@@ -180,14 +181,47 @@ Follows the safety spec in the README:
 Done when: tests with a fake client cover each rule above, all tests pass, and Main
 has reviewed the diff (it removes playlist items).
 
-## T8. Suggest step (later)
+Built as `apply.py`. Rows applied: SWAP rows and REVIEW rows with verdict `correct`,
+never `wrong`. `--max-ops` counts swaps (default 20); each swap is three writes
+(add, move before the old item, remove the old item), 1.5 s apart. A stale-report
+check reads the playlist once and skips rows whose item is gone.
 
-Add new songs to the Inbox tagged `source: claude`. The dashboard's hit-rate-by-source
-table already tracks how many get kept. Design after T7.
+Nice later: `undo` keeps no log of its own, so an undo that stops partway can't
+be resumed cleanly. A re-run fails safely at the first add instead.
+
+## T8. Suggest step (design, awaiting approval)
+
+Claude suggests new songs for the Inbox; the vault tracks how many get kept.
+
+1. `ytm-hygiene suggest --seed` prints a short taste summary from the vault:
+   keepers, rejected and expired songs (artist and title only, no network). You
+   paste it into a Claude chat and ask for suggestions.
+2. Claude replies with lines of `Artist - Title`. Save them to a text file.
+3. `ytm-hygiene suggest songs.txt --dry-run` searches each line once (songs
+   filter, 1 s apart), picks the best Art Track with the `match.py` scoring
+   (title + artist only), and skips songs that already have a note in any
+   status, so rejected songs never come back.
+4. Without `--dry-run`, it adds the found songs to the Inbox with the `apply.py`
+   writer (throttle, stop on first error, undo log, `--max-ops`) and writes
+   notes with `source: claude`. `undo` reverses the adds.
+
+Done when:
+
+- `--seed` makes no requests.
+- One search per line, at most `--max-ops` adds, and nothing written on `--dry-run`.
+- A song with an existing note is skipped, whatever its status.
+- New notes have `source: claude` and `status: inbox`.
+- `undo` on the log removes the added songs.
+- Tests with a fake client cover each point; all tests pass.
+
+Open for T8: the minimum match score for an add (proposal: 0.85 on title +
+artist, otherwise listed as not found).
 
 ## Open decisions
 
-- None for T3–T4. The anchor approach and TOML config are approved (2026-10-18).
-- T7: swap in place or on a copy? The playlists are YouTube playlists, so a swap
-  in place also replaces the video with the song on youtube.com. A copy keeps the
-  original playlist as it is. Decide before T7.
+- T8 design above: approve or change it before it gets built.
+- Sync prints moves (promote, remove from Inbox or Rotation) but nothing applies
+  them yet. Should a later task let `apply` run them, with the same safety rules?
+- Expiry follows the approved rule "never heard". A song heard in exactly one
+  sync never expires and stays in the Inbox until you rate it. Keep, or also
+  expire it after more syncs?

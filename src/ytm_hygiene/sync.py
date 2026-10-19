@@ -2,17 +2,20 @@
 and proposed playlist moves. Pure logic: the caller fetches and writes.
 
 Statuses: inbox (on trial), keeper, rejected, expired.
-Signals: thumbs up/down, and the days a song showed up in history. History has
-no timestamps or play counts, only buckets like "Today" and "This week", so a
-song counts as heard on a day only when synced daily ("Today"/"Yesterday").
+Signals: thumbs up/down, and the syncs where a song showed up in history.
+History has no timestamps and a replay moves a song to the top, so each sync
+stores the top of history as an anchor. The next sync counts everything above
+where that anchor resumes as played since.
 """
 
 from dataclasses import dataclass
-from datetime import date, timedelta
+from datetime import date
 
 INBOX, KEEPER, REJECTED, EXPIRED = "inbox", "keeper", "rejected", "expired"
-KEEP_AFTER_DAYS_HEARD = 2
-DEFAULT_EXPIRE_DAYS = 14
+KEEP_AFTER_SYNCS_HEARD = 2
+EXPIRE_AFTER_SYNCS = 3
+DEFAULT_EXPIRE_DAYS = 30
+ANCHOR_SIZE = 10
 
 
 @dataclass
@@ -23,16 +26,27 @@ class Move:
     reason: str
 
 
-def heard_on(history: list[dict], today: date) -> dict[str, date | None]:
-    """videoId -> day heard, or None when history only says 'This week' etc."""
-    offsets = {"today": 0, "yesterday": 1}
-    heard: dict[str, date | None] = {}
-    for item in history:
-        offset = offsets.get((item.get("played") or "").strip().lower())
-        day = today - timedelta(days=offset) if offset is not None else None
-        if item.get("videoId") and (heard.get(item["videoId"]) is None):
-            heard[item["videoId"]] = day
-    return heard
+@dataclass
+class Result:
+    notes: dict[str, dict]
+    moves: list[Move]
+    state: dict  # next sync-state.yaml: last_sync, anchor
+    warning: str | None = None
+
+
+def plays_since(history_ids: list[str], anchor: list[str]) -> tuple[list[str], bool]:
+    """(videoIds played since the anchor was taken, whether the anchor was found).
+
+    Below the resume point, history is the old history minus the songs replayed
+    since, in the same order. So the resume point is the first position where
+    the anchor songs not seen above it follow in their old order.
+    """
+    for i in range(len(history_ids)):
+        above = set(history_ids[:i])
+        rest = [v for v in anchor if v not in above]
+        if rest and history_ids[i : i + len(rest)] == rest[: len(history_ids) - i]:
+            return history_ids[:i], True
+    return history_ids, False
 
 
 def new_note(track: dict, source: str, status: str, today: date) -> dict:
@@ -49,9 +63,18 @@ def new_note(track: dict, source: str, status: str, today: date) -> dict:
         "added": today,
         "first_heard": None,
         "last_heard": None,
-        "heard_days": [],
+        "heard_syncs": [],
+        "inbox_syncs": 0,
         "like": "INDIFFERENT",
     }
+
+
+def _upgrade(meta: dict) -> dict:
+    """Copy a note, giving notes from the old daily sync the new fields."""
+    meta = {k: v for k, v in meta.items() if k != "heard_days"}
+    meta["heard_syncs"] = list(meta.get("heard_syncs") or [])
+    meta["inbox_syncs"] = meta.get("inbox_syncs") or 0
+    return meta
 
 
 def sync(
@@ -59,11 +82,11 @@ def sync(
     inbox: list[dict],
     rotation: list[dict],
     history: list[dict],
+    state: dict,
     today: date,
     expire_days: int = DEFAULT_EXPIRE_DAYS,
-) -> tuple[dict[str, dict], list[Move]]:
-    """Returns (all notes after the update, proposed playlist moves)."""
-    notes = {vid: {**meta, "heard_days": list(meta.get("heard_days") or [])} for vid, meta in notes.items()}
+) -> Result:
+    notes = {vid: _upgrade(meta) for vid, meta in notes.items()}
 
     for meta in notes.values():
         meta["playlist"] = None
@@ -74,17 +97,25 @@ def sync(
             meta = notes.setdefault(track["videoId"], new_note(track, name, default_status, today))
             meta["playlist"] = name
             meta["like"] = track.get("likeStatus") or meta.get("like") or "INDIFFERENT"
+            if name == "inbox":
+                meta["inbox_syncs"] += 1
 
-    for video_id, day in heard_on(history, today).items():
+    history_ids = [h["videoId"] for h in history if h.get("videoId")]
+    played, found = plays_since(history_ids, state.get("anchor") or [])
+    warning = None
+    if not found:
+        warning = (
+            "No anchor from the last sync found in history (first sync, or ~200+ plays since). "
+            "Counting all of history as heard."
+        )
+    for video_id in set(played):
         meta = notes.get(video_id)
         if meta is None:
             continue
-        if day and day not in meta["heard_days"]:
-            meta["heard_days"] = sorted(meta["heard_days"] + [day])
-        seen = day or today
-        meta["first_heard"] = meta.get("first_heard") or seen
-        if not meta.get("last_heard") or seen > meta["last_heard"]:
-            meta["last_heard"] = seen
+        if today not in meta["heard_syncs"]:
+            meta["heard_syncs"].append(today)
+        meta["first_heard"] = meta.get("first_heard") or today
+        meta["last_heard"] = today
 
     moves = []
     for video_id, meta in notes.items():
@@ -103,7 +134,9 @@ def sync(
                 meta["status"] = REJECTED
             if meta["status"] in (REJECTED, EXPIRED):
                 moves.append(Move("remove_rotation", video_id, title, f"status {meta['status']}"))
-    return notes, moves
+
+    new_state = {"last_sync": today, "anchor": history_ids[:ANCHOR_SIZE]}
+    return Result(notes, moves, new_state, warning)
 
 
 def _judge(meta: dict, today: date, expire_days: int) -> tuple[str, str]:
@@ -111,8 +144,12 @@ def _judge(meta: dict, today: date, expire_days: int) -> tuple[str, str]:
         return KEEPER, "thumbs up"
     if meta["like"] == "DISLIKE":
         return REJECTED, "thumbs down"
-    if len(meta["heard_days"]) >= KEEP_AFTER_DAYS_HEARD:
-        return KEEPER, f"heard on {len(meta['heard_days'])} days"
-    if (today - meta["added"]).days >= expire_days:
-        return EXPIRED, "never heard" if not meta.get("first_heard") else "heard once, not again"
+    if len(meta["heard_syncs"]) >= KEEP_AFTER_SYNCS_HEARD:
+        return KEEPER, f"heard in {len(meta['heard_syncs'])} syncs"
+    if (
+        not meta["heard_syncs"]
+        and meta["inbox_syncs"] >= EXPIRE_AFTER_SYNCS
+        and (today - meta["added"]).days >= expire_days
+    ):
+        return EXPIRED, "never heard"
     return INBOX, ""
