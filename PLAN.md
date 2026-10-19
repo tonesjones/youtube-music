@@ -41,7 +41,13 @@ media, keep request volume low, `browser.json` auth only (never OAuth).
   searches once). History: every run newest first, Undo renames the log to
   `undone-*.json`; the list reloads whenever the tab opens. 162 tests pass.
   None of the screens has touched a real account yet.
-- Next: try the app on real playlists, then U7 (`.exe`) and U8 (README).
+- U7 done 2026-10-18 (worker): `packaginguild.ps1` builds
+  `dist\YouTube Music Cleanup.exe` (35 MB, one file, no console) with
+  nicegui-pack + PyInstaller 6.22.3 (new `build` extra);
+  `packaging\install-shortcut.ps1` adds a Start-menu shortcut (`-Uninstall`
+  removes it). The exe passes `--check` with no Python on PATH. U8 done: README
+  is for app users; the command line moved to `docs/cli.md`. 164 tests pass.
+- Next: your end-to-end test on a real account (steps in the session wrap-up).
 
 ## T1–T2 results (2026-10-18)
 
@@ -329,8 +335,8 @@ Plain words throughout: "music video" and "song", never OMV/UGC/ATV;
 | U4 | Inbox screen over `sync` + `apply_moves` | Sonnet (`worker`), done | U1 |
 | U5 | Suggestions screen over `suggest` | Haiku (`scout`), done | U1 |
 | U6 | History + undo screen | Haiku (`scout`), done | U1 |
-| U7 | Package as a Windows `.exe` with a Start-menu shortcut | Sonnet (`worker`) | U2–U6 |
-| U8 | README rewritten for app users first, CLI second | Main, `technical-writing` | U7 |
+| U7 | Package as a Windows `.exe` with a Start-menu shortcut | Sonnet (`worker`), done | U2–U6 |
+| U8 | README rewritten for app users first, CLI second | Main, `technical-writing`, done | U7 |
 
 Done when:
 

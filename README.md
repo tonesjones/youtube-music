@@ -1,226 +1,148 @@
-# ytm-hygiene
+# YouTube Music Cleanup
 
-Replaces music videos in a YouTube Music playlist with their audio-only song
-versions (Art Tracks), so offline downloads take less space. It only edits
-playlists and never downloads media.
+A Windows app for your YouTube Music playlists. It does two jobs:
 
-YouTube and YouTube Music share playlists, so a playlist you made on YouTube
-works here with the same ID.
+- **Clean up a playlist.** It swaps music videos for the song version of the
+  same track. Songs download as audio only, so a playlist downloaded to your
+  phone takes much less space.
+- **Curate new music.** New songs go into an *Inbox* playlist. The app checks
+  what you've listened to, moves the ones you keep to a *Rotation* playlist, and
+  clears out the ones you don't. An optional Obsidian vault keeps a note per song.
 
-Status: `backup`, `scan`, `evaluate`, `apply`, `undo`, `sync` and `suggest`
-work. `apply`, `sync --apply` and `suggest` haven't been run against YouTube yet.
+It only edits playlists. It never downloads music or videos. Every change asks
+you to confirm first, and you can undo it from the History screen.
 
-## Setup
+YouTube and YouTube Music share playlists, so the playlists you made on YouTube
+show up here too.
 
-```sh
-pip install -e ".[dev]"
-ytmusicapi browser        # paste request headers from a logged-in browser; writes browser.json
+## Install
+
+You need Python 3.11 or later once, to build the app. After that, the app runs
+on its own.
+
+In PowerShell, from this folder:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File packaging\build.ps1
 ```
 
-`browser.json` holds your session cookies and is git-ignored. The client uses
-English and US settings.
-
-If every request fails with an empty or non-JSON reply, open `browser.json` and
-delete the `content-encoding` and `accept-encoding` lines. Headers copied from
-Firefox include them, and they break ytmusicapi.
-
-## Accuracy test
-
-```sh
-ytm-hygiene backup <playlist-id-or-url>    # backups/<id>-<timestamp>.json
-ytm-hygiene scan <playlist-id-or-url>      # read-only; also writes a backup; creates report.csv
-# open report.csv, fill the verdict column: correct / wrong / missed
-ytm-hygiene evaluate report.csv
+```powershell
+powershell -ExecutionPolicy Bypass -File packaging\install-shortcut.ps1
 ```
 
-Verdicts:
+The first command builds `dist\YouTube Music Cleanup.exe`. The second copies it
+to `%LOCALAPPDATA%\Programs\YouTube Music Cleanup` and adds **YouTube Music
+Cleanup** to the Start menu. To remove both, run the second command again with
+`-Uninstall`.
 
-- `correct`: the proposed song is the right one.
-- `wrong`: the proposed song is a different track or version.
-- `missed`: a song version exists, but the tool didn't propose it (mostly NO_MATCH rows).
+To run the app without building it:
 
-The scan makes one song search per non-song track, at least 1 s apart. If the
-filtered search finds nothing, it tries one unfiltered search.
+```powershell
+pip install -e ".[app]"
+ytm-hygiene-app
+```
 
-`scan --clean` is for kid-friendly playlists. It flags explicit candidates and
-prefers clean versions. By default, explicit is fine; a clean candidate for an
-explicit original is flagged.
+Started from a folder that already holds `browser.json` or `ytm-hygiene.toml`,
+such as this one after using the command line, the app uses the files there
+instead of `%APPDATA%\ytm-hygiene`.
 
-## How a track is classified
+## Set up the app
 
-| Original type | Action |
+The first time you open the app, it shows the **Setup** screen. It has three
+steps.
+
+1. **Sign in to YouTube Music.** The app signs in with a copy of your browser's
+   request headers, not your password. The screen shows how to copy them from
+   Chrome, Edge or Firefox. Paste them and press **Sign in**. The app checks
+   them with one request and saves them only if they work.
+2. **Choose your Obsidian vault.** This step is optional. Skip it if you don't
+   use Obsidian.
+3. **Choose your Inbox and Rotation playlists.** Pick them by name, or press
+   **Create Inbox for me** and **Create Rotation for me**. This step is only
+   needed for the Inbox screen.
+
+If the app later says it can't read your playlists, your sign-in has expired.
+Open **Setup** and sign in again.
+
+## Clean up a playlist
+
+1. Open **Clean up a playlist** and press **Choose a playlist**.
+2. Pick a playlist and press **Check this playlist**. The app saves a backup
+   first, then looks for the song version of each video. This takes about a
+   second per video.
+3. Look over the results:
+   - **Ready to swap:** sure matches, already ticked.
+   - **Please check these:** possible matches with a reason, such as "one is a
+     live version". Press **Open** to listen to either one. Choose **Looks
+     right** to tick it, or **Wrong** to leave it out.
+   - **No song version found:** nothing to swap. Fan remixes and unreleased
+     tracks usually end up here.
+4. Press **Swap** and confirm. Each swap puts the song in the same spot as the
+   video. The app swaps 20 songs at a time; press **Swap** again for the rest.
+
+## Curate your Inbox
+
+Add new songs you want to try to your Inbox playlist, then listen as usual.
+Every few days, open **Inbox** and press **Check what I've listened to**.
+
+An Inbox song is decided by the first rule that matches:
+
+| What happened | Result |
 |---|---|
-| ATV (song) | KEEP |
-| OMV, UGC | SWAP when the score is at least the threshold (default 0.90) and there are no flags; otherwise REVIEW, or NO_MATCH when the best usable candidate scores below 0.60 |
-| OFFICIAL_SOURCE_MUSIC | always REVIEW (often live sets or compilations) |
+| Thumbs up | Moves to Rotation |
+| Thumbs down | Removed from the Inbox |
+| Heard in 2 separate checks | Moves to Rotation |
+| Never heard, after 3 checks and 30 days in the Inbox | Removed from the Inbox |
+| Heard in 1 check, then not again for 3 checks and 30 days | Removed from the Inbox |
 
-Score = 0.50 × title + 0.35 × artist + 0.15 × length.
+Each check counts toward these rules, so checking twice in one afternoon
+doesn't help. Untick any change you don't want, then press **Apply** and
+confirm.
 
-- **Title:** the mean of rapidfuzz `token_set_ratio` and `token_sort_ratio`
-  on cleaned titles. Using token_set alone treats "Love" and "Love Story" as
-  identical. Cleanup removes video noise such as "(Official Video)", "[4K]",
-  "(lyrics on screen)", "(CDQ)", "(Explicit Version)" and feat. blocks.
-- **Artist:** 1.0 when an artist ID overlaps; otherwise fuzzy match on
-  normalized names. For user uploads, the "Artist - Title" prefix counts as
-  an artist.
-- **Length:** the song may run at most 15 s shorter than the video. It may run
-  at most 75 s longer than an official video (OMV), which is often a shorter
-  edit, and at most 5 s longer than a user upload (UGC).
+With an Obsidian vault, each song gets a note in `Music/Songs/`. You can set
+`status` in a note to `keeper` or `rejected` yourself, and the next check
+proposes that move. Anything you write in the body of a note is kept.
 
-Flags force REVIEW:
+## Get suggestions from Claude
 
-- `duration`, `no_duration`
-- `artist`: the artist score is below 0.60, which usually means a cover or a
-  lookalike
-- `version:<tag>`: one side is live, remix, acoustic, sped up, slowed,
-  instrumental, karaoke, cover or remaster, and the other isn't
-- `version:remixer`: both sides are remixes, but by different remixers, or
-  one remix names no remixer
-- `clean_version` / `explicit`
-- `official_source`
-- `no_setVideoId`
+1. Open **Get suggestions** and press **Copy my taste summary**. It lists the
+   songs you kept and the ones you rejected.
+2. Paste it into a chat with Claude and ask for songs you might like, one
+   `Artist - Title` per line.
+3. Paste Claude's reply into the app and press **Find songs**.
+4. Untick any you don't want, then press **Add to Inbox** and confirm.
 
-Candidates must be available Art Tracks.
+Songs you already have a note for are skipped, so a rejected song never comes
+back.
 
-`report.csv` has two columns beyond the spec, `playlist_id` and
-`old_setVideoId`, which `apply` uses.
+## Undo a change
 
-## Apply the swaps
+Open **History**. It lists every swap, Inbox change and suggestion run, newest
+first. Press **Undo** on a run and confirm to put your playlists back the way
+they were before it. A run can be undone once.
 
-`apply` swaps each video for its song in the same playlist, at the same
-position. Because the playlist is shared, youtube.com shows the songs too.
+## Where your files are
 
-It swaps SWAP rows, and REVIEW rows you marked `correct`. It skips rows marked
-`wrong`.
+The app keeps its files in `%APPDATA%\ytm-hygiene`:
 
-```sh
-ytm-hygiene apply report.csv --allow-playlist <playlist-id> --dry-run   # print the writes, make none
-ytm-hygiene apply report.csv --allow-playlist <playlist-id>
-```
+- `browser.json`: your sign-in. It lets the app act as you on YouTube Music,
+  so don't share it.
+- `ytm-hygiene.toml`: your settings.
+- `backups\`: a copy of each playlist before the app changes it.
+- `undo-*.json`: the record History uses to undo a run.
 
-- `--allow-playlist` is required. If any row belongs to another playlist,
-  `apply` stops before writing.
-- `--max-ops` caps the swaps per run (default 20).
-- Before writing, `apply` reads the playlist once and saves a backup. It skips
-  rows whose video is no longer in the playlist, so an old report can't remove
-  the wrong item.
-- Each swap makes three writes, at least 1.5 s apart: add the song, move it
-  before the video, and remove the video.
-- On the first error, `apply` stops.
+The app makes a few requests per action and never checks anything in the
+background. It uses an unofficial YouTube Music API on your account, so it
+keeps the number of requests low.
 
-Every write is recorded in `undo-<timestamp>.json` before the next one starts.
-To reverse a run, including one that stopped partway:
+## Command line and development
 
-```sh
-ytm-hygiene undo undo-20261018-120000.json --allow-playlist <playlist-id>
-```
+Every screen also has a command. See the
+[command-line reference](docs/cli.md), which also explains how songs are
+matched.
 
-`undo` also takes `--dry-run`. It writes no log of its own. For a log that
-covers two playlists, such as one from `sync --apply`, give `--allow-playlist`
-once for each.
+To run the tests:
 
-## Curation: Obsidian song log
-
-This uses two playlists you create in YouTube Music:
-
-- **Inbox:** new songs on trial.
-- **Rotation:** proven keepers, downloaded on your phone.
-
-To skip the flags on every run, copy `ytm-hygiene.example.toml` to
-`ytm-hygiene.toml` and fill in your vault folder and both playlist IDs. That
-file is git-ignored. Command-line flags override it, and `--config <path>`
-reads another file.
-
-```sh
-ytm-hygiene sync
-ytm-hygiene sync --vault ~/Obsidian/MyVault --inbox <inbox-id> --rotation <rotation-id>
-```
-
-Run sync by hand whenever you like. It makes three read requests (both
-playlists and your history). It writes one note per song to `Music/Songs/`,
-then `Music/sync-state.yaml`, and creates `Music/Music Dashboard.md` once. The
-dashboard needs the Dataview plugin.
-
-Sync prints the playlist moves it proposes. To carry them out, add `--apply`:
-
-```sh
-ytm-hygiene sync --apply --dry-run   # print the writes, make none
-ytm-hygiene sync --apply
-```
-
-- A promote adds the song to Rotation, then removes it from the Inbox. Other
-  moves remove the song from the Inbox or Rotation.
-- Moves run only after the notes and `sync-state.yaml` are saved.
-- Sync writes only to the configured Inbox and Rotation.
-- `--max-ops` caps the moves per run (default 20). Writes are at least 1.5 s
-  apart, sync stops on the first error, and every write goes to an undo log,
-  as with `apply`.
-
-### What counts as heard
-
-A song is heard in a sync when it shows up in your history since the previous
-sync. History has no timestamps, and a replayed song moves to the top instead
-of showing up twice. So each sync saves the top 10 history songs in
-`sync-state.yaml`. The next sync finds where those songs continue in their old
-order and counts every song above that point as played, replays included.
-
-If sync can't find them, it counts your whole history and prints a warning.
-That happens on the first sync, or after roughly 200 plays since the last one.
-
-Each note lists the syncs where its song was heard in `heard_syncs`. One sync
-adds one entry, however many times the song played. `inbox_syncs` counts the
-syncs that saw the song in the Inbox, and `quiet_syncs` counts the ones since
-its last play.
-
-### How an Inbox song is decided
-
-The first rule that matches wins:
-
-| Signal | Result |
-|---|---|
-| Thumbs up | keeper, moves to Rotation |
-| Thumbs down | rejected, removed from Inbox |
-| Heard in 2 separate syncs | keeper |
-| Never heard, in the Inbox for at least 3 syncs and at least 30 days (`--expire-days`) | expired, removed from Inbox |
-| Heard in 1 sync, then not again for at least 3 syncs and 30 days | expired, removed from Inbox |
-
-A thumbs down on a Rotation song marks it rejected. You can also set `status`
-(inbox / keeper / rejected) in any note yourself, and the next sync proposes
-the matching move. Sync only changes a note's properties; anything you write
-in the note body is kept. Notes from older versions keep working: sync adds the
-new fields and drops `heard_days`. An older dashboard still shows the
-`heard_days` column. Delete it, and the next sync writes the new one.
-
-Skips aren't visible in YouTube data.
-
-## Suggestions from Claude
-
-`suggest` adds songs Claude recommends to the Inbox. The dashboard's hit rate
-by source table then shows how many of them you keep.
-
-1. Print a taste summary of your keepers and rejected songs. This makes no requests:
-
-   ```sh
-   ytm-hygiene suggest --seed
-   ```
-
-2. Paste it into a Claude chat. Save the reply, one `Artist - Title` per line,
-   to a text file such as `songs.txt`.
-3. Check what would be added, then add it:
-
-   ```sh
-   ytm-hygiene suggest songs.txt --dry-run
-   ytm-hygiene suggest songs.txt
-   ```
-
-`suggest` searches once per line, 1 s apart. It adds a song only when the best
-Art Track scores at least 0.85 on title and artist and has the same version
-tags as the line. It skips songs that already have a note, in any status, so a
-rejected song never comes back. New notes get `source: claude`. `--max-ops`
-caps the adds per run (default 20), and `undo` removes them.
-
-## Tests
-
-```sh
-python -m pytest -q   # no network; fixtures in tests/fixtures
+```powershell
+python -m pytest -q
 ```

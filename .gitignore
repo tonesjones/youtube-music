@@ -13,3 +13,10 @@ __pycache__/
 *.egg-info/
 .venv/
 .pytest_cache/
+
+# Packaging output
+build/
+dist/
+*.spec
+!packaging/*.spec
+check-error.txt
