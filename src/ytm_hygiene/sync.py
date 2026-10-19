@@ -65,6 +65,7 @@ def new_note(track: dict, source: str, status: str, today: date) -> dict:
         "last_heard": None,
         "heard_syncs": [],
         "inbox_syncs": 0,
+        "quiet_syncs": 0,
         "like": "INDIFFERENT",
     }
 
@@ -74,6 +75,7 @@ def _upgrade(meta: dict) -> dict:
     meta = {k: v for k, v in meta.items() if k != "heard_days"}
     meta["heard_syncs"] = list(meta.get("heard_syncs") or [])
     meta["inbox_syncs"] = meta.get("inbox_syncs") or 0
+    meta.setdefault("quiet_syncs", meta["inbox_syncs"])
     return meta
 
 
@@ -99,6 +101,7 @@ def sync(
             meta["like"] = track.get("likeStatus") or meta.get("like") or "INDIFFERENT"
             if name == "inbox":
                 meta["inbox_syncs"] += 1
+                meta["quiet_syncs"] += 1
 
     history_ids = [h["videoId"] for h in history if h.get("videoId")]
     played, found = plays_since(history_ids, state.get("anchor") or [])
@@ -116,6 +119,7 @@ def sync(
             meta["heard_syncs"].append(today)
         meta["first_heard"] = meta.get("first_heard") or today
         meta["last_heard"] = today
+        meta["quiet_syncs"] = 0
 
     moves = []
     for video_id, meta in notes.items():
@@ -146,10 +150,8 @@ def _judge(meta: dict, today: date, expire_days: int) -> tuple[str, str]:
         return REJECTED, "thumbs down"
     if len(meta["heard_syncs"]) >= KEEP_AFTER_SYNCS_HEARD:
         return KEEPER, f"heard in {len(meta['heard_syncs'])} syncs"
-    if (
-        not meta["heard_syncs"]
-        and meta["inbox_syncs"] >= EXPIRE_AFTER_SYNCS
-        and (today - meta["added"]).days >= expire_days
-    ):
-        return EXPIRED, "never heard"
+    # quiet_syncs counts Inbox syncs since the last play (or since added).
+    since = meta.get("last_heard") or meta["added"]
+    if meta["quiet_syncs"] >= EXPIRE_AFTER_SYNCS and (today - since).days >= expire_days:
+        return EXPIRED, "heard once, not again" if meta["heard_syncs"] else "never heard"
     return INBOX, ""

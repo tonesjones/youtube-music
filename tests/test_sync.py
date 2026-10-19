@@ -273,3 +273,27 @@ def test_old_format_note_loads_gets_defaults_and_drops_heard_days(tmp_path):
     _, saved, _ = load_songs(tmp_path)["a"]
     assert "heard_days" not in saved
     assert saved["heard_syncs"] == [] and saved["inbox_syncs"] == 0
+
+
+def _heard_once_then_quiet(quiet_days_after):
+    """Song "a" heard in the first sync (60 days ago), then one quiet sync per entry."""
+    heard_day = TODAY - timedelta(days=60)
+    result = sync({}, [track("a")], [], hist("a", "o1", "o2", "o3"), STATE, heard_day)
+    for days in quiet_days_after:
+        result = sync(result.notes, [track("a")], [], hist("a", "o1", "o2", "o3"), result.state,
+                      heard_day + timedelta(days=days))
+    return result
+
+
+def test_heard_once_then_3_quiet_syncs_and_30_days_expires():
+    result = _heard_once_then_quiet([10, 20, 30])
+    assert result.notes["a"]["status"] == EXPIRED
+    assert [(m.action, m.reason) for m in result.moves] == [("remove_inbox", "heard once, not again")]
+
+
+def test_heard_once_then_3_quiet_syncs_but_29_days_stays():
+    assert _heard_once_then_quiet([10, 20, 29]).notes["a"]["status"] == INBOX
+
+
+def test_heard_once_then_2_quiet_syncs_and_30_days_stays():
+    assert _heard_once_then_quiet([15, 30]).notes["a"]["status"] == INBOX

@@ -169,7 +169,8 @@ That happens on the first sync, or after roughly 200 plays since the last one.
 
 Each note lists the syncs where its song was heard in `heard_syncs`. One sync
 adds one entry, however many times the song played. `inbox_syncs` counts the
-syncs that saw the song in the Inbox.
+syncs that saw the song in the Inbox, and `quiet_syncs` counts the ones since
+its last play.
 
 ### How an Inbox song is decided
 
@@ -181,6 +182,7 @@ The first rule that matches wins:
 | Thumbs down | rejected, removed from Inbox |
 | Heard in 2 separate syncs | keeper |
 | Never heard, in the Inbox for at least 3 syncs and at least 30 days (`--expire-days`) | expired, removed from Inbox |
+| Heard in 1 sync, then not again for at least 3 syncs and 30 days | expired, removed from Inbox |
 
 A thumbs down on a Rotation song marks it rejected. You can also set `status`
 (inbox / keeper / rejected) in any note yourself, and the next sync proposes

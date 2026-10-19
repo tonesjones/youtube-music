@@ -17,7 +17,10 @@ media, keep request volume low, `browser.json` auth only (never OAuth).
   reviewed the diff and added two guards (`suggest --seed` needs no
   browser.json; sync refuses to apply moves when Inbox and Rotation are the
   same playlist). 125 tests pass. Neither has run against YouTube yet.
-- Next: the expiry decision below.
+- Expiry extended 2026-10-18 (your call): a song heard in 1 sync, then not
+  again for 3 syncs and 30 days, also expires. Notes count `quiet_syncs`
+  (Inbox syncs since the last play). 128 tests pass.
+- Next: try the write commands on real playlists, starting with `--dry-run`.
 
 ## T1–T2 results (2026-10-18)
 
@@ -137,6 +140,7 @@ One sync adds at most one entry, however many times the song played.
 | Thumbs down | rejected, removed from Inbox |
 | Heard in 2 separate syncs | keeper |
 | In the Inbox for at least 3 syncs and at least 30 days, never heard | expired, removed from Inbox |
+| Heard in 1 sync, then not again for 3 syncs and 30 days (added 2026-10-18) | expired, removed from Inbox |
 
 Each note counts `inbox_syncs`: how many syncs saw the song in the Inbox.
 `--expire-days` defaults to 30. The Rotation and manual `status` rules stay the same.
@@ -246,6 +250,4 @@ still pass, sync without `--apply` makes no writes, and Main has reviewed the di
 
 ## Open decisions
 
-- Expiry follows the approved rule "never heard". A song heard in exactly one
-  sync never expires and stays in the Inbox until you rate it. Keep, or also
-  expire it after more syncs?
+- None.
